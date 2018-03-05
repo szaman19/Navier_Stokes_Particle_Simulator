@@ -6,15 +6,10 @@ Created by Oliver Fringer
 
 <img src="./guide/images/galviston.png" height="350" title="Unstructured grid of Galveston Bay, TX (Matt Rayson)"> <img src="./guide/images/snoho3.jpg" height="350" title="Near Surface Salinity in the Snohomish River (Bing Wang)">
 
-### Quickstart Guide
-Download the main source and examples from the GitHub repository here:
-https://github.com/ofringer/suntans/archive/master.zip
 
-Follow these steps:
 
-1.  `unzip suntans-master.zip`
-2.  `cd suntans-master/examples/cylinder`
-3.  `make test`
-4.  `cd ../../main`
-5.  `make sunplot`
-6.  `./sunplot --datadir=../examples/cylinder/data`
+### Initialization
+1. Run make for triangle with updated flag for linux
+
+### Updating SUNTANS with support for Lagrangian Mechanics
+1. New Files Added: lagrangian.c lagrangian.h example/lagrangian
