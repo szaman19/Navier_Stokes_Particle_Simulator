@@ -89,7 +89,7 @@ DEPFLAGS = -Y
 
 SRCS = 	mympi.c grid.c gridio.c report.c util.c fileio.c phys.c physio.c suntans.c initialization.c memory.c \
 	turbulence.c boundaries.c check.c scalars.c tvd.c timer.c profiles.c state.c tides.c \
-	sources.c diffusion.c met.c averages.c age.c merge.c sendrecv.c sediments.c lagrangian.c\
+	sources.c diffusion.c met.c averages.c age.c merge.c sendrecv.c sediments.c lagrangian.c particle.c\
 	$(TRIANGLESRC) $(PARMETISSRC) $(MPIFILE) $(NETCDFSRC)
 OBJS = $(SRCS:.c=.o)
 
@@ -162,3 +162,4 @@ mynetcdf.o: mynetcdf.h suntans.h phys.h grid.h met.h boundaries.h
 averages.o: averages.h phys.h grid.h met.h
 # Lagranian Code Compilation
 lagrangian.o: phys.h met.h sources.h scalars.h util.h state.h
+particle.o: phys.h grid.h suntans.h

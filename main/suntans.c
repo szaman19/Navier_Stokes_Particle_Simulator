@@ -7,16 +7,17 @@
  * Navier-Stokes Simulator
  *
  * http://suntans.stanford.edu
- * 
+ *
  * Written by Oliver B. Fringer
  * Dept. of Civil and Environmental Engineering
  * Stanford University
- * 
- * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior 
+ *
+ * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior
  * University. All Rights Reserved.
- * 
+ *
  */
 #include "suntans.h"
+#include "particle.h"
 #include "mympi.h"
 #include "grid.h"
 #include "gridio.h"
@@ -31,16 +32,18 @@ int main(int argc, char *argv[])
   gridT *grid;
   physT *phys;
   propT *prop;
+  //particle class
+  particle *part;
 
   StartMpi(&argc,&argv,&comm,&myproc,&numprocs);
 
   ParseFlags(argc,argv,myproc);
-  
+
   if(GRID)
     GetGrid(&grid,myproc,numprocs,comm);
   else
     ReadGrid(&grid,myproc,numprocs,comm);
-  
+
 
   if(SOLVE) {
     //read parameters in suntans.dat into the solver
@@ -48,6 +51,8 @@ int main(int argc, char *argv[])
     // give space and initialize dzf(edge) dzz(center) dzzold(center)
     InitializeVerticalGrid(&grid,myproc);
     AllocatePhysicalVariables(grid,&phys,prop);
+    //particle space allocation
+    // AllocateParticleVariables(&part);
     AllocateTransferArrays(&grid,myproc,numprocs,comm);
     OpenFiles(prop,myproc);
     if(RESTART)
@@ -55,15 +60,13 @@ int main(int argc, char *argv[])
     else
       InitializePhysicalVariables(grid,phys,prop,myproc,comm);
 
-    Solve(grid,phys,prop,myproc,numprocs,comm);
+    // InitializeParticleVariable(grid,part);
+
+    Solve(grid,phys,prop,part,myproc,numprocs,comm);
+    // TrialOutput(grid,phys,prop,myproc,numprocs,0,comm);
     //    FreePhysicalVariables(grid,phys,prop);
     //    FreeTransferArrays(grid,myproc,numprocs,comm);
   }
 
   EndMpi(&comm);
 }
-
-
-
-
-

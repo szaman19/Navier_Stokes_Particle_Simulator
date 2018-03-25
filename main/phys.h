@@ -5,7 +5,7 @@
  * --------------------------------
  * Header file for phys.c.
  *
- * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior 
+ * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior
  * University. All Rights Reserved.
  *
  */
@@ -15,7 +15,7 @@
 #include "suntans.h"
 #include "grid.h"
 #include "fileio.h"
-
+#include "particle.h"
 /*
  * Enumerated type definitions
  *
@@ -40,13 +40,13 @@ typedef struct _physT {
 
   /*  new variables for nodal and tangential velocities */
   // definitions follow from Wang et al 2011
-  // nRT1[Np][Nk][numpcneighs] so that for each node there is a 
-  // value for each cell neighbor (non-unique to a node) and 
+  // nRT1[Np][Nk][numpcneighs] so that for each node there is a
+  // value for each cell neighbor (non-unique to a node) and
   // note that the number of cell neighbors varies based on node
   REAL ***nRT1u;
   REAL ***nRT1v;
-  // nRT2[Np][Nk] has a unique value for each node since it is 
-  // the area-weigted average of all the nRT1 values 
+  // nRT2[Np][Nk] has a unique value for each node since it is
+  // the area-weigted average of all the nRT1 values
   // around the node
   REAL **nRT2u;
   REAL **nRT2v;
@@ -156,8 +156,8 @@ typedef struct _physT {
   REAL *wp;
   REAL *wm;
   REAL **gradSx;
-  REAL **gradSy; 
-  
+  REAL **gradSy;
+
   //Variables for heat flux model
   REAL *Tsurf;
   REAL *dT;
@@ -181,25 +181,25 @@ typedef struct _physT {
  *
  */
 typedef struct _propT {
-  REAL dt, Cmax, rtime, amp, omega, flux, timescale, theta0, theta, thetaM, 
-       thetaS, thetaB, nu, nu_H, tau_T, z0T, CdT, z0B, CdB, CdW, relax, epsilon, qepsilon, resnorm, 
-       dzsmall, beta, kappa_s, kappa_sH, gamma, kappa_T, kappa_TH, grav, Coriolis_f, CmaxU, CmaxW, 
+  REAL dt, Cmax, rtime, amp, omega, flux, timescale, theta0, theta, thetaM,
+       thetaS, thetaB, nu, nu_H, tau_T, z0T, CdT, z0B, CdB, CdW, relax, epsilon, qepsilon, resnorm,
+       dzsmall, beta, kappa_s, kappa_sH, gamma, kappa_T, kappa_TH, grav, Coriolis_f, CmaxU, CmaxW,
        laxWendroff_Vertical, latitude;
-  int ntout, ntoutStore, ntprog, nsteps, nstart, n, ntconserve, nonhydrostatic, cgsolver, maxiters, 
-      qmaxiters, hprecond, qprecond, volcheck, masscheck, nonlinear, linearFS, newcells, wetdry, sponge_distance, 
-    sponge_decay, thetaramptime, readSalinity, readTemperature, turbmodel, 
+  int ntout, ntoutStore, ntprog, nsteps, nstart, n, ntconserve, nonhydrostatic, cgsolver, maxiters,
+      qmaxiters, hprecond, qprecond, volcheck, masscheck, nonlinear, linearFS, newcells, wetdry, sponge_distance,
+    sponge_decay, thetaramptime, readSalinity, readTemperature, turbmodel,
     TVD, horiTVD, vertTVD, TVDsalt, TVDtemp, TVDturb, laxWendroff, stairstep, AB, TVDmomentum, conserveMomentum,
     mergeArrays, computeSediments;
-  FILE *FreeSurfaceFID, *HorizontalVelocityFID, *VerticalVelocityFID, *SalinityFID, *BGSalinityFID, 
-       *InitSalinityFID, *InitTemperatureFID, *TemperatureFID, *PressureFID, *VerticalGridFID, *ConserveFID,    
-       *StoreFID, *StartFID, *EddyViscosityFID, *ScalarDiffusivityFID; 
+  FILE *FreeSurfaceFID, *HorizontalVelocityFID, *VerticalVelocityFID, *SalinityFID, *BGSalinityFID,
+       *InitSalinityFID, *InitTemperatureFID, *TemperatureFID, *PressureFID, *VerticalGridFID, *ConserveFID,
+       *StoreFID, *StartFID, *EddyViscosityFID, *ScalarDiffusivityFID;
   interpolation interp; int prettyplot;
   int metmodel,  varmodel, outputNetcdf,  metncid, netcdfBdy, netcdfBdyFileID, readinitialnc, initialNCfileID, calcage, agemethod, calcaverage;
   int outputNetcdfFileID, averageNetcdfFileID;
   REAL nctime, toffSet, gmtoffset;
   int nctimectr, avgtimectr, avgctr, avgfilectr, ntaverage, nstepsperncfile, ncfilectr;
   REAL nugget, sill, range, Lsw, Cda, Ce, Ch;
-  char  starttime[15], basetime[15]; 
+  char  starttime[15], basetime[15];
 } propT;
 
 
@@ -207,7 +207,8 @@ typedef struct _propT {
  * Public function declarations.
  *
  */
-void Solve(gridT *grid, physT *phys, propT *prop, int myproc, int numprocs, MPI_Comm comm);
+void Solve(gridT *grid, physT *phys, propT *prop, particle *p,int myproc, int numprocs, MPI_Comm comm);
+void SolveNew(gridT *grid, physT *phys, propT *prop, particle *p, int myproc, int numprocs, MPI_Comm comm);
 void AllocatePhysicalVariables(gridT *grid, physT **phys, propT *prop);
 void FreePhysicalVariables(gridT *grid, physT *phys, propT *prop);
 void InitializePhysicalVariables(gridT *grid, physT *phys, propT *prop, int myproc, MPI_Comm comm);

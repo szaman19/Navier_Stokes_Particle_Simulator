@@ -5,7 +5,7 @@
  * --------------------------------
  * Header file for grid.c.
  *
- * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior 
+ * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior
  * University. All Rights Reserved.
  *
  */
@@ -30,24 +30,24 @@
  *
  */
 typedef struct _gridT {
-  REAL *xp;
-  REAL *yp;
-  REAL *xv;
-  REAL *yv;
-  REAL *xe;
-  REAL *ye;
-  REAL *dv;
-  REAL *dz;
-  REAL **dzz;
-  REAL **dzf;
-  REAL *dzfB;
-  REAL **dzzold;
-  REAL *dztop;
-  REAL *dzbot; 
-  REAL dzsmall;
-  int *face;
-  int *edges;
-  int *cells;
+  REAL *xp; //x-coordinate of delauney point
+  REAL *yp; // y-coordinate of delauney point
+  REAL *xv; // x-coordinate of voronoi point
+  REAL *yv; // y-coordinate of voronoi point
+  REAL *xe; // x-coordinate of intersection of voronoi and delauney edges
+  REAL *ye; // y-coordinate of intersection of voronoi and delayney edges
+  REAL *dv; //
+  REAL *dz; //
+  REAL **dzz; //
+  REAL **dzf; //
+  REAL *dzfB; //
+  REAL **dzzold; //
+  REAL *dztop; //
+  REAL *dzbot;  //
+  REAL dzsmall; //
+  int *face; // list of faces of each cell (each cell has three)
+  int *edges; //list of edges
+  int *cells; // list of cells
   int *neigh;
   int *eneigh;
   int *grad;
@@ -65,11 +65,11 @@ typedef struct _gridT {
   int *numpcneighs;   // number of cell neighbors to point
   int **pcneighs;     // index of cell neighbors to a point
   REAL **Actotal;     // total area of cell neighbor areas to point
-                      // note that this is over all the cells and 
+                      // note that this is over all the cells and
                       // the layer too
 // eventually want to get these here and not use global variables
 //  // variables to define how the halo works
-//  boundaryselection g_halolist[2] ={EDGE, NODE}; 
+//  boundaryselection g_halolist[2] ={EDGE, NODE};
 //  int g_halolistsize = 2;
 
   int *xadj;

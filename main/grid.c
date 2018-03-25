@@ -5,7 +5,7 @@
  * --------------------------------
  * This file contains grid-based functions.
  *
- * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior 
+ * Copyright (C) 2005-2006 The Board of Trustees of the Leland Stanford Junior
  * University. All Rights Reserved.
  *
  */
@@ -28,7 +28,7 @@
 boundaryselection g_halolist[1] ={EDGE};// classic suntans
 const int g_halolistsize = 1;
 //// for quadratic interpolation
-//boundaryselection g_halolist[2] ={NODE, NODE}; 
+//boundaryselection g_halolist[2] ={NODE, NODE};
 //const int g_halolistsize = 2;
 
 /*
@@ -45,17 +45,17 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc);
 static REAL GetCircumcircleRadius(REAL *xt, REAL *yt, int Nf);
 static void EdgeMarkers(gridT *maingrid, gridT **localgrid, int myproc);
 static void ReOrder(gridT *grid);
-static int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid, 
+static int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid,
     int myproc, int neighproc);
-static int IsEdgeNeighborProc(int ne, gridT *maingrid, gridT *localgrid, 
+static int IsEdgeNeighborProc(int ne, gridT *maingrid, gridT *localgrid,
     int myproc, int neighproc);
-static int IsNodeNeighborProc(int np, gridT *maingrid, gridT *localgrid, 
+static int IsNodeNeighborProc(int np, gridT *maingrid, gridT *localgrid,
     int myproc, int neighproc);
-static int IsNeighborGlobal(int cell, gridT *maingrid, 
+static int IsNeighborGlobal(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize);
-static int IsNeighborGlobalByEdge(int cell, gridT *maingrid, 
+static int IsNeighborGlobalByEdge(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize);
-static int IsNeighborGlobalByNode(int cell, gridT *maingrid, 
+static int IsNeighborGlobalByNode(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize);
 static int IsNeighborLocal(int cell, gridT *maingrid, int myproc,
     boundaryselection *list, int listsize);
@@ -71,11 +71,11 @@ static int IsBoundaryCellByNode(int mgptr, gridT *maingrid, int myproc,
     boundaryselection *list, int listsize);
 static void  BoundaryTopologyByHalo(gridT *maingrid, int numprocs,
     boundaryselection *list, int listsize);
-static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid, 
+static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
     int numprocs, boundaryselection *list, int listsize);
-static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid, 
+static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
     int numprocs, boundaryselection *list, int listsize);
-static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, 
+static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc,
     MPI_Comm comm);
 static void ResortBoundaries(gridT *localgrid, int myproc);
 static void InterpDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm);
@@ -85,7 +85,7 @@ static void ReorderCellPoints(int *face, int *edges, int *cells, int *nfaces, in
 static void Reordergradf(int *face, int *grad, int *gradf, int *nfaces, int maxfaces, int Nc, int Ne);
 static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc);
 static void CreateNormalArray(int *grad, int *face, int *normal, int *nfaces, int maxfaces, int Nc);
-static void CreateArray(int *grad, int *gradf, int *neigh, int *face, 
+static void CreateArray(int *grad, int *gradf, int *neigh, int *face,
     int Nc, int Ne);
 static void CreateMomentumCV(gridT *grid);
 static int CorrectVoronoi(gridT *grid, int myproc);
@@ -121,7 +121,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
     Np = MPI_GetSize(POINTSFILE,"GetGrid",myproc);
     Ne = MPI_GetSize(EDGEFILE,"GetGrid",myproc);
     Nc = MPI_GetSize(CELLSFILE,"GetGrid",myproc);
-    
+
     // Every processor will know about data read in from
     // triangle as well as the depth.
     if(myproc==0 && VERBOSE>0) printf("Initializing Main Grid...\n");
@@ -133,7 +133,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
     // note that this only affects points: xp,yp, edges: edges, mark, grad
     // cells: xv, yv, cells, neigh
     ReadMainGrid(maingrid,myproc);
-  } 
+  }
   //  if we need to compute the grid with the triangle library
   else {
     // get the triangulation via the triangle libraries
@@ -145,7 +145,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
     }
   }
 
-  // Adjust Voronoi points for obtuse triangles (CorrectVoronoi==-1) 
+  // Adjust Voronoi points for obtuse triangles (CorrectVoronoi==-1)
   // or for small Voronoi edge lengths (CorrectVoronoi==+1).
   // this seems like it should be wrapped into its own function
   if(myproc==0 && VERBOSE>1) {
@@ -158,7 +158,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
       if(numcorr) {
         printf("Voronoi statistics after correction:\n");
         VoronoiStats(maingrid);
-      } else 
+      } else
         printf("No Voronoi points were corrected.\n");
     }
   }
@@ -168,7 +168,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
       if(numcorr) {
         printf("Voronoi statistics after correction:\n");
         VoronoiStats(maingrid);
-      } else 
+      } else
         printf("No Voronoi points were corrected.\n");
     }
   }
@@ -179,7 +179,7 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
   if(myproc==0 && VERBOSE>0) printf("Getting the depth for graph weights...\n");
   GetDepth(maingrid,myproc,numprocs,comm);
 
-  // functions to set up parallelization of the code and compute geometrical 
+  // functions to set up parallelization of the code and compute geometrical
   // information needed for grid computations
 
   // Set the following pointers
@@ -200,12 +200,12 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
   // most important and complicated function to ensure parallelism for grid
   // takes the main grid and redistributes to local grids on each processor
   Partition(maingrid,localgrid,comm);
-  
+
   // functions to check to make sure all the communications are set up properly
   //  CheckCommunicateCells(maingrid,*localgrid,myproc,comm);
   //  CheckCommunicateEdges(maingrid,*localgrid,myproc,comm);
   //  SendRecvCellData2D((*localgrid)->dv,*localgrid,myproc,comm);
- 
+
   if(myproc==0 && VERBOSE>0) printf("Outputting Data...\n");
   OutputGridData(maingrid,*localgrid,myproc,numprocs);
 
@@ -216,16 +216,16 @@ void GetGrid(gridT **localgrid, int myproc, int numprocs, MPI_Comm comm)
  * Function: Partition
  * Usage: Partition(maingrid, localgrid, comm)
  * ------------------------------------------
- * Partitions the cells unto each processor where ParMETIS 
- * colors each cell according to its processor based on 
- * weighting each cell by the depth (so that shallow 
+ * Partitions the cells unto each processor where ParMETIS
+ * colors each cell according to its processor based on
+ * weighting each cell by the depth (so that shallow
  * regions of the domain which are less computationally
- * expensive are weighted less) in GetPartitioning.  
+ * expensive are weighted less) in GetPartitioning.
  * Topology determines neighboring processors for each
- * processor and TransferData determines which cells must 
+ * processor and TransferData determines which cells must
  * have their information passed between processors.
  *
- * 
+ *
  *
  */
 void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
@@ -245,9 +245,9 @@ void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   // Useful to create cell graph compatible with ParMETIS to "color" each
   // cell based on its partitioning on a processor in Partition:GetPartitioning
   CreateCellGraph(maingrid);
- 
-  // use ParMETIS API get get parallelized partioning, this basically 
-  // just assigns each cell to a particular processor number  
+
+  // use ParMETIS API get get parallelized partioning, this basically
+  // just assigns each cell to a particular processor number
   // (color cells with mapping!)
   if(myproc==0 && VERBOSE>1) printf("\tComputing Partitioning...\n");
   GetPartitioning(maingrid,localgrid,myproc,numprocs,comm);
@@ -255,7 +255,7 @@ void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   // output a list of each cells processor for debugging
   //  PrintVectorToFile(INT, maingrid->part, maingrid->Nc, "CellProcessors.dat",0);
 
-  // location of these functions seems a little funny, they could be "popped" out 
+  // location of these functions seems a little funny, they could be "popped" out
   // of this function up a level for a little more clarity
 
   // topology basically just computes the number of neighbors "Nneighs"
@@ -263,36 +263,36 @@ void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   // which is also stored on the localgrid, "myneighs"
   // now we have a complete description of all the neighboring cell processors
   // for cells sharing an edges on the processor boundary.
-  // NOte that this does not allow for cells to complete the whole layer, which may 
-  // also be on a separate processor (like a wedge).  Hence, an additional loop in 
-  // Topology is needed to consider the cases where a node is connected to an 
-  // interprocessor edge 
-  // which has a different processor number than node on the edge considered.  
-  // This way the full amount of topology information can be gained.  
+  // NOte that this does not allow for cells to complete the whole layer, which may
+  // also be on a separate processor (like a wedge).  Hence, an additional loop in
+  // Topology is needed to consider the cases where a node is connected to an
+  // interprocessor edge
+  // which has a different processor number than node on the edge considered.
+  // This way the full amount of topology information can be gained.
   // It is likely that TransferData will also have to be changed to account for this
   // behavior as it is no longer as simple as saying that we have an edge and its
-  // associated neighs (cells on either side).  We now have an edge connected to 
-  // two nodes which may be shared between multiple cells and the computational 
-  // complexity and time to do the gridding increases 
-  // this seems to necessitate the idea of a nodepoints.dat.proc type file where we 
-  // have the node number p in 0 <= p <= Np, number of cell neighbors to node, numpneighs, 
+  // associated neighs (cells on either side).  We now have an edge connected to
+  // two nodes which may be shared between multiple cells and the computational
+  // complexity and time to do the gridding increases
+  // this seems to necessitate the idea of a nodepoints.dat.proc type file where we
+  // have the node number p in 0 <= p <= Np, number of cell neighbors to node, numpneighs,
   // a list of the cell numbers associated with each of the neighbors to the node
-  // as in Pniegh (point neighbor).  For simplicity it is aslo probably good to 
+  // as in Pniegh (point neighbor).  For simplicity it is aslo probably good to
   // store the number of the neighboring nodes (sharing an edge with p), particularly
   // to speed up the interpolation when it is time to do it. Thus the number of entries
-  // will be free form.  This structure will be needed to adequately compute the 
+  // will be free form.  This structure will be needed to adequately compute the
   // number of neighboring processors and processor info for Topology
-  // doing the nodal neighbor approach as opposed to edge approach will increase the 
+  // doing the nodal neighbor approach as opposed to edge approach will increase the
   // number of neighbors that must be transfered (as all cells touching a boundary
   // node are now considered important ghost cells)
-  // Topology needs updated so that any cell touching a node is considered to allow 
+  // Topology needs updated so that any cell touching a node is considered to allow
   // flagging as a boundary node
   if(myproc==0 && VERBOSE>1) printf("\tComputing Topology...\n");
   Topology(&maingrid,localgrid,myproc,numprocs);
 
   if(myproc==0 && VERBOSE>1) printf("\tTransferring data...\n");
   // function to move data between main and local grid where boundary points were
-  // defined with convention of shared edge with number and list of neighbors 
+  // defined with convention of shared edge with number and list of neighbors
   // described in Topology
   TransferData(maingrid,localgrid,myproc);
 
@@ -306,13 +306,13 @@ void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   if(myproc==0 && VERBOSE>1) printf("\tVert grid...\n");
   // get vertical grid, notably Nke, Nkc to distinguish number of layers at edges, cells
   VertGrid(maingrid,localgrid,comm);
-  
-  if(myproc==0 && VERBOSE>1) 
+
+  if(myproc==0 && VERBOSE>1)
     printf("\tComputing edge and voronoi distances and areas...\n");
   Geometry(maingrid,localgrid,myproc);
 
   //if(myproc==0 && VERBOSE>2) printf("\tReordering...\n");
-  // function to reorder the grid for increased computational efficiency, this 
+  // function to reorder the grid for increased computational efficiency, this
   // is not currently known to work
   //  ReOrder(*localgrid);
 
@@ -337,7 +337,7 @@ void Partition(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
 void InitMainGrid(gridT **grid, int Np, int Ne, int Nc, int myproc)
 { int n;
   *grid = (gridT *)SunMalloc(sizeof(gridT),"InitMainGrid");
-  
+
   // Number of cells
   //  (*grid)->Nc = getsize(CELLSFILE);
   (*grid)->Nc = Nc;
@@ -347,10 +347,10 @@ void InitMainGrid(gridT **grid, int Np, int Ne, int Nc, int myproc)
   // Number of points defining the vertices of the polygons
   //(*grid)->Np = getsize(POINTSFILE);
   (*grid)->Np = Np;
- 
+
   // Max number of edges of cells
   (*grid)->maxfaces=MPI_GetValue(DATAFILE,"maxFaces","GetDepth",myproc);
- 
+
   // (x,y) coordinates of vertices
   (*grid)->xp = (REAL *)SunMalloc((*grid)->Np*sizeof(REAL),"InitMainGrid");
   (*grid)->yp = (REAL *)SunMalloc((*grid)->Np*sizeof(REAL),"InitMainGrid");
@@ -384,7 +384,7 @@ void InitMainGrid(gridT **grid, int Np, int Ne, int Nc, int myproc)
   (*grid)->eneigh = (int *)SunMalloc(2*((*grid)->maxfaces-1)*(*grid)->Ne*sizeof(int),"InitMainGrid");
 
   // allocae nodal neighbor array information (list of neighbors for each point)
-  // note that since the number of entries for each node is variable, 
+  // note that since the number of entries for each node is variable,
   // these are a list to Np lists
   (*grid)->numppneighs = (int *)SunMalloc((*grid)->Np*sizeof(int),"InitMainGrid");
   (*grid)->ppneighs = (int **)SunMalloc((*grid)->Np*sizeof(int*),"InitMainGrid");
@@ -424,7 +424,7 @@ void InitMainGrid(gridT **grid, int Np, int Ne, int Nc, int myproc)
  * Populates:
  *  grid->dv
  *  grid->vwgt
- *  
+ *
  */
 void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
 {
@@ -445,10 +445,10 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
   //fixdzz=(REAL)MPI_GetValue(DATAFILE,"fixdzz","GetDepth",myproc);
   grid->dzsmall = (REAL)MPI_GetValue(DATAFILE,"dzsmall","FixDZZ",myproc);
 
-  if(IntDepth==1) 
-    // interpolate the depth if desired 
+  if(IntDepth==1)
+    // interpolate the depth if desired
     InterpDepth(grid,myproc,numprocs,comm);
-  else if(IntDepth==2) 
+  else if(IntDepth==2)
     // already have cell center values so just read these
     ReadDepth(grid,myproc);
   else {
@@ -461,19 +461,19 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
   if(myproc==0 && IntDepth!=2) {
     sprintf(str,"%s-voro",INPUTDEPTHFILE);
     ofile = MPI_FOpen(str,"w","InterpDepth",myproc);
-    for(n=0;n<grid->Nc;n++) 
+    for(n=0;n<grid->Nc;n++)
       fprintf(ofile,"%f %f %f\n",grid->xv[n],grid->yv[n],grid->dv[n]);
     fclose(ofile);
   }
 
-  for(n=0;n<grid->Nc;n++) 
+  for(n=0;n<grid->Nc;n++)
     if(grid->dv[n]>maxdepth)
       maxdepth = grid->dv[n];
   maxdepth0 = maxdepth;
 
-  GetDZ(dz,maxdepth,maxdepth,Nkmax,myproc);  
+  GetDZ(dz,maxdepth,maxdepth,Nkmax,myproc);
 
-  //  if(!stairstep && fixdzz) 
+  //  if(!stairstep && fixdzz)
   //    FixDZZ(grid,maxdepth,Nkmax,fixdzz,myproc);
 
   if(minimum_depth!=0) {
@@ -485,7 +485,7 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
 	  kount++;
 	}
       }
-      if(VERBOSE>0 && myproc==0 && kount>0) 
+      if(VERBOSE>0 && myproc==0 && kount>0)
 	printf("Increased the depth to the minimum set value of %.2f %d times.\n",minimum_depth,kount);
     } else if(minimum_depth<0) {
       for(n=0;n<grid->Nc;n++) {
@@ -494,11 +494,11 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
 	  kount++;
 	}
       }
-      if(VERBOSE>0 && myproc==0 && kount>0) 
+      if(VERBOSE>0 && myproc==0 && kount>0)
 	printf("Increased the depth to the minimum set value of dz[0]=%.2f %d times.\n",dz[0],kount);
     }
   }
-  
+
   for(n=0;n<grid->Nc;n++) {
     if(grid->dv[n]>maxdepth)
       maxdepth = grid->dv[n];
@@ -509,20 +509,20 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
   if(maxdepth!=maxdepth0 && myproc==0) printf("WARNING!!!!!!!!!  Maximum depth changed after fixing vertical spacing...\n");
 
   if(Nkmax>1) {
-    if(mindepth!=maxdepth) 
+    if(mindepth!=maxdepth)
       for(n=0;n<grid->Nc;n++) {
 	grid->vwgt[n]=(int)(maxgridweight*(float)GetNk(dz,grid->dv[n],Nkmax)/(float)Nkmax);
 	//	grid->vwgt[n] = (int)(maxgridweight*(grid->dv[n]-mindepth)/(maxdepth-mindepth));
     } else
-      for(n=0;n<grid->Nc;n++) 
+      for(n=0;n<grid->Nc;n++)
 	grid->vwgt[n] = maxgridweight;
   } else {
-      for(n=0;n<grid->Nc;n++) 
+      for(n=0;n<grid->Nc;n++)
 	grid->vwgt[n] = Nkmax;
   }
 
-  if(VERBOSE>3) 
-    for(n=0;n<grid->Nc;n++) 
+  if(VERBOSE>3)
+    for(n=0;n<grid->Nc;n++)
       printf("grid->vwgt[%d]=%d\n",n,grid->vwgt[n]);
 
   SunFree(dz,Nkmax*sizeof(REAL),"GetDepth");
@@ -532,7 +532,7 @@ void GetDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
  * Function: CreateCellGraph
  * Usage: CreateCellGraph(grid)
  * ------------------------------------------
- * Initialize the serial CSR xadj and adjncy 
+ * Initialize the serial CSR xadj and adjncy
  * data structures to import graph structure into
  * ParMETIS for graph partitioning (See ParMETIS
  * API for definitions and more info).
@@ -557,11 +557,11 @@ void CreateCellGraph(gridT *grid)
 
   Nge=0;
   grid->xadj[0]=Nge;
-  for(n=0;n<grid->Nc;n++) { 
+  for(n=0;n<grid->Nc;n++) {
     for(j=0;j<grid->nfaces[n];j++) {
       // for each cell's face where the neighbor is real (non-ghost)
       if(grid->neigh[grid->maxfaces*n+j]!=-1) {
-        // populate adjacency matrix with non-ghost cells where 
+        // populate adjacency matrix with non-ghost cells where
         // each neighbor for a cell is added together
         grid->adjncy[Nge++]=grid->neigh[grid->maxfaces*n+j];
       }
@@ -573,11 +573,11 @@ void CreateCellGraph(gridT *grid)
   // output adjacency information
   if(VERBOSE>3) {
     printf("xadj: ");
-    for(n=0;n<grid->Nc+1;n++) 
+    for(n=0;n<grid->Nc+1;n++)
       printf("%d ",grid->xadj[n]);
     printf("\n");
     printf("adjncy: ");
-    for(j=0;j<Nge;j++) 
+    for(j=0;j<Nge;j++)
       printf("%d ",grid->adjncy[j]);
     printf("\n");
   }
@@ -587,7 +587,7 @@ void CreateCellGraph(gridT *grid)
  * Function: CreateEdgeGraph
  * Usage: CreateEdgeGraph(grid)
  * ------------------------------------------
- * Initialize the serial CSR xadj and adjncy 
+ * Initialize the serial CSR xadj and adjncy
  * data structures to import graph structure into
  * ParMETIS for graph partitioning (See ParMETIS
  * API for definitions and more info).
@@ -598,11 +598,11 @@ void CreateEdgeGraph(gridT *grid)
   int grad1, grad2, enei, n, j, Nge;
 
   Nge = 0;
-  for(n=0;n<grid->Ne;n++) 
+  for(n=0;n<grid->Ne;n++)
     //corrected part for get the grad for each edge, then get the eneigh
     grad1=grid->grad[n*2];
     grad2=grid->grad[n*2+1];
-    // enei:the number of eneigh for each edge 
+    // enei:the number of eneigh for each edge
     enei = grad1 + grad2 -2;
     for(j=0;j<enei;j++)
       if(grid->eneigh[2*(grid->maxfaces-1)*n+j]!=-1) Nge++;
@@ -611,13 +611,13 @@ void CreateEdgeGraph(gridT *grid)
 
   Nge=0;
   grid->xadj[0]=Nge;
-  for(n=0;n<grid->Ne;n++) { 
+  for(n=0;n<grid->Ne;n++) {
     //corrected part for get the grad for each edge, then get the eneigh
     grad1=grid->grad[n*2];
     grad2=grid->grad[n*2+1];
-    // enei:the number of eneigh for each edge 
+    // enei:the number of eneigh for each edge
     enei = grad1 + grad2 -2;
-    for(j=0;j<enei;j++) 
+    for(j=0;j<enei;j++)
       if(grid->eneigh[2*(grid->maxfaces-1)*n+j]!=-1) {
 	grid->adjncy[Nge++]=grid->eneigh[2*(grid->maxfaces-1)*n+j];
       }
@@ -625,11 +625,11 @@ void CreateEdgeGraph(gridT *grid)
     }
   if(VERBOSE>3) {
     printf("xadj: ");
-    for(n=0;n<grid->Ne+1;n++) 
+    for(n=0;n<grid->Ne+1;n++)
       printf("%d ",grid->xadj[n]);
     printf("\n");
     printf("adjncy: ");
-    for(j=0;j<Nge;j++) 
+    for(j=0;j<Nge;j++)
       printf("%d ",grid->adjncy[j]);
     printf("\n");
   }
@@ -642,23 +642,23 @@ void CreateEdgeGraph(gridT *grid)
  * CreateFaceArray information, called for both the local and
  * global grids.
  *
- * Inputs: 
+ * Inputs:
  *   grad
  *   nfaces
  *   neigh
  * Outputs:
  *   face
- *   gradf 
+ *   gradf
  *
  */
-static void CreateFaceArray(int *grad, int *gradf, int *neigh, int *face, int *nfaces, int maxfaces, int Nc, int Ne) 
+static void CreateFaceArray(int *grad, int *gradf, int *neigh, int *face, int *nfaces, int maxfaces, int Nc, int Ne)
 {
   int n, j, nf, nc, nc1, nc2, nb;
 
   // initialize all the faces to ghost faces in each cell over all faces of a cell
   for(n=0;n<Nc;n++)
     for(nf=0;nf<nfaces[n];nf++)
-      face[n*maxfaces+nf]=-1; 
+      face[n*maxfaces+nf]=-1;
   for(n=0;n<Ne;n++)
     for(j=0;j<2;j++)
       gradf[2*n+j]=-1;
@@ -674,8 +674,8 @@ static void CreateFaceArray(int *grad, int *gradf, int *neigh, int *face, int *n
         nb = neigh[nc1*maxfaces+nf];
 	//printf("nb is %d \n", nb);
         if(nb==nc2) {
-          // if the neighbor and the adjacent cell are the same then we 
-          // can store the actual face number and also the pointer to the face normal to 
+          // if the neighbor and the adjacent cell are the same then we
+          // can store the actual face number and also the pointer to the face normal to
           // the edge
           face[nc1*maxfaces+nf]=n;
           gradf[2*n] = nf;
@@ -714,8 +714,8 @@ static void CreateFaceArray(int *grad, int *gradf, int *neigh, int *face, int *n
     }
   }
 
-  // - seems like the possibility that gradf wouldn't get assigned for 
-  // a cell with ghost edge- but 
+  // - seems like the possibility that gradf wouldn't get assigned for
+  // a cell with ghost edge- but
   // probably it is not needed/never called-- this is somewhat unclear
 }
 
@@ -775,7 +775,7 @@ static void ReorderCellPoints(int *face, int *edges, int *cells, int *nfaces, in
 
       // compare nodes to find first value for cells
       sharednode = SharedListValue(n1, n2, 2);
-      //if edge is not clockwise or counter-clockwise 
+      //if edge is not clockwise or counter-clockwise
       //exchang with the next one
       if(sharednode==-1 && maxfaces>3){
          for(i=0;i<(nff-1-nf);i++)
@@ -785,10 +785,10 @@ static void ReorderCellPoints(int *face, int *edges, int *cells, int *nfaces, in
          face[nc*maxfaces+nff-1]=e3[0];
          nf=nf-1;
       } else if(sharednode==-1 && maxfaces==3) {
-        printf("Error as sharednode in %s not found %d\n", "ReorderCellPoints",maxfaces);     
+        printf("Error as sharednode in %s not found %d\n", "ReorderCellPoints",maxfaces);
       }
       // check for match
-      if(sharednode != -1) 
+      if(sharednode != -1)
         cells[maxfaces*nc + (nf+1)]  = sharednode;
 
     }
@@ -810,7 +810,7 @@ static void ReorderCellPoints(int *face, int *edges, int *cells, int *nfaces, in
     else
       printf("Error as sharednode in %s not found\n", "ReorderCellPoints");
   }
-  //PJw now we have sorted our list of cell vertexes to correspond with the 
+  //PJw now we have sorted our list of cell vertexes to correspond with the
   // structure in the face (edge) array for the cell
 }
 
@@ -818,8 +818,8 @@ static void ReorderCellPoints(int *face, int *edges, int *cells, int *nfaces, in
  * Function: CreateNodeArray
  * Usage: CreateNodeArray(grad, gradf, neigh, face, Nc, Ne)
  * --------------------------------------------------------
- * CreatNodeArray information so that all the nodal and cell 
- * neighboors for a nodal point can be easily accessed, 
+ * CreatNodeArray information so that all the nodal and cell
+ * neighboors for a nodal point can be easily accessed,
  * called for both the global and local grids.
  *
  * Output:
@@ -842,7 +842,7 @@ static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc)
   // cells with angles less than or equal 30 deg.
   int in, ie, ic, nf, np1, np2, inn, inode, maxnodeneighs, maxedgeneighs, maxcellneighs;
   int **tempppneighs, tempnumppneighs, **temppeneighs, **temppcneighs;
-  maxnodeneighs = 24; 
+  maxnodeneighs = 24;
   maxedgeneighs = 24; //since the edges are intentionally counted twice (once per cell)
   maxcellneighs = 12;
 
@@ -856,7 +856,7 @@ static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc)
     temppcneighs[in] = (int *)SunMalloc(maxcellneighs*sizeof(int),"CreateNodeArray");
   }
   // initialize the number of neighbors for each point
-  for (in = 0; in < Np; in++) { 
+  for (in = 0; in < Np; in++) {
     grid->numppneighs[in] = 0;
     grid->numpeneighs[in] = 0;
     grid->numpcneighs[in] = 0;
@@ -926,7 +926,7 @@ static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc)
   }
   // transfer termporary values to datastructures
   for(in = 0; in < Np; in++) {
-    // allocate memory 
+    // allocate memory
     grid->peneighs[in] = (int*)SunMalloc(grid->numpeneighs[in]*sizeof(int),"CreateNodeArray");
     grid->ppneighs[in] = (int*)SunMalloc(grid->numppneighs[in]*sizeof(int),"CreateNodeArray");
     // transfer values
@@ -942,7 +942,7 @@ static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc)
 
   // for each node
   for(in = 0; in < Np; in++) {
-    // allocate memory (note that we are going to 
+    // allocate memory (note that we are going to
     //1/2 the size because of redundancy reduction)
     //  printf("grid->numppneighs[in]/2=%d\n", grid->numppneighs[in]);
     //    grid->ppneighs[in] = (int*)SunMalloc(grid->numppneighs[in]/2*sizeof(int),"CreateNodeArray");
@@ -969,11 +969,11 @@ static void CreateNodeArray(gridT *grid, int Np, int Ne, int Nc, int myproc)
   }
 
   //  printf("Finished computing nodal array information\n");
-  for(in=0;in<Np;in++) 
+  for(in=0;in<Np;in++)
     SunFree(tempppneighs[in],maxnodeneighs*sizeof(int),"CreateNodeArray");
-  for(in=0;in<Np;in++) 
+  for(in=0;in<Np;in++)
     SunFree(temppeneighs[in],maxedgeneighs*sizeof(int),"CreateNodeArray");
-  for(in=0;in<Np;in++) 
+  for(in=0;in<Np;in++)
     SunFree(temppcneighs[in],maxcellneighs*sizeof(int),"CreateNodeArray");
 
   SunFree(tempppneighs,Np*sizeof(int *),"CreateNodeArray");
@@ -996,7 +996,7 @@ static void CreateNormalArray(int *grad, int *face, int *normal, int *nfaces, in
   for(n=0;n<Nc;n++){
     // over each face on the cell
     for(nf=0;nf<nfaces[n];nf++) {
-      // for each face arbitrarily set normal to -1 if the first grad 
+      // for each face arbitrarily set normal to -1 if the first grad
       // is the same cell as the current cell, otherwise 1
       if(n==grad[2*face[maxfaces*n+nf]])
         normal[n*maxfaces+nf]=-1;
@@ -1030,8 +1030,8 @@ void Connectivity(gridT *grid, int myproc)
   /* Create the face array, which contains indexes to the edges of
      each cell */
   if(myproc==0 && VERBOSE>2) printf("\tCreating face array and normals and nodal neighboors\n");
-  // get pointers to the faces of each cell (grid->face[NFACES*Nc]) as well as 
-  // pointers to the face number of given cell corresponding to given edge 
+  // get pointers to the faces of each cell (grid->face[NFACES*Nc]) as well as
+  // pointers to the face number of given cell corresponding to given edge
   // (grid->gradf[2*Ne])
   CreateFaceArray(grid->grad,grid->gradf,grid->neigh,grid->face,grid->nfaces,grid->maxfaces,grid->Nc,grid->Ne);
 
@@ -1051,20 +1051,20 @@ void Connectivity(gridT *grid, int myproc)
 
   if(myproc==0 && VERBOSE>2) printf("\tCreating global node array...\n");
   CreateNodeArray(grid, grid->Np, grid->Ne, grid->Nc, myproc);
-  
+
   /* Create the edge connectivity array eneigh, which points to the 2(NFACES-1)
      neighbors that comprise the edges for the momentum control volume */
   if(myproc==0 && VERBOSE>2) printf("\tCreating edge connectivity array...\n");
   // get the edges comprizing the momentum control volume grid->eneigh[4*Ne]
   CreateMomentumCV(grid);
- 
+
 }
 
 /*
  * Function: CreateMomentumCV
  * Usage: CreateMomentumCV(grid)
  * ------------------------------------------
- * Determine the edges for the momentum control volume, 
+ * Determine the edges for the momentum control volume,
  * grid->eneigh[2(maxfaces-1)
  *
  */
@@ -1085,7 +1085,7 @@ static void CreateMomentumCV(gridT *grid)
       if(grid->grad[2*n+ng]!=-1) {
         // for each face
         for(nf=0; nf < grid->nfaces[grid->grad[2*n+ng]]; nf++) {
-          // determine if the face for each neighbor 
+          // determine if the face for each neighbor
           // isn't the current edge
           if(grid->face[grid->maxfaces*grid->grad[2*n+ng]+nf]!=n) {
             // if it isn't, set the momentum control volume
@@ -1094,7 +1094,7 @@ static void CreateMomentumCV(gridT *grid)
         }
       }
     }
-  }  
+  }
 }
 
 /*
@@ -1102,21 +1102,21 @@ static void CreateMomentumCV(gridT *grid)
  * Usage: IsBoundaryCell(i,maingrid,myproc);
  * -----------------------------------------
  * Determines whether or not the global cell index
- * i is a boundary cell. 
+ * i is a boundary cell.
  * Returns:
  *   3 if this is a ghost cell.
  *   2 if this is an inner interproc boundary cell.
- *   1 if this is a non-interproc boundary cell 
- *     (not a ghost cell), i.e. free-surface specified 
+ *   1 if this is a non-interproc boundary cell
+ *     (not a ghost cell), i.e. free-surface specified
  *      containing an edge with mark=3
  *   0 otherwise, (e.g., computational cells)
  *  -1 for error.
  *
  * If it is both a ghost cell and a boundary cell or
- * both a 
+ * both a
  *
  */
-// may have to be changed to incorporate full row of 
+// may have to be changed to incorporate full row of
 // interprocessor cells for the interpolation, generalized
 // halo region
 int IsBoundaryCell(int mgptr, gridT *maingrid, int myproc)
@@ -1147,7 +1147,7 @@ int IsBoundaryCell(int mgptr, gridT *maingrid, int myproc)
     // this is probably for debugging
     return 0;
   } else
-    //  the cell is a ghost cell to the local processor (not 
+    //  the cell is a ghost cell to the local processor (not
     //  on the set of cells on the local processor)
     return 3;
 }
@@ -1158,7 +1158,7 @@ int IsBoundaryCell(int mgptr, gridT *maingrid, int myproc)
  * -----------------------------------------
  * Determines whether or not the global cell index
  * i is a boundary cell by searching through all
- * it's halo points. 
+ * it's halo points.
  * Returns:
  *   2 if this is an inner interproc boundary cell.
  *  -1 for no hit
@@ -1171,7 +1171,7 @@ static int IsBoundaryCellByHalo(int mgptr, gridT *maingrid, int myproc,
   if(listsize < 1) {
     printf("Error!!: List for boundary neighbors needs to be larger!\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
 
   // select which function to call off the first item in the list
@@ -1194,13 +1194,13 @@ static int IsBoundaryCellByHalo(int mgptr, gridT *maingrid, int myproc,
  * Usage: IsBoundaryCellByEdge(i,maingrid,myproc);
  * -----------------------------------------
  * Determines whether or not the global cell index
- * i is a boundary cell. 
+ * i is a boundary cell.
  * Returns:
  *   2 if this is an inner interproc boundary cell.
  *  -1 for no hit
  *
  */
-static int IsBoundaryCellByEdge(int cell, gridT *maingrid, int myproc, 
+static int IsBoundaryCellByEdge(int cell, gridT *maingrid, int myproc,
     boundaryselection *list, int listsize)
 {
   int nf, nei;
@@ -1210,14 +1210,14 @@ static int IsBoundaryCellByEdge(int cell, gridT *maingrid, int myproc,
   for(nf=0;nf<maingrid->nfaces[cell];nf++) {
     nei = maingrid->neigh[cell*maingrid->maxfaces+nf];
     // if any neighbor is not a ghost cell check to see
-    // if it is on the processor too, if not it is an 
+    // if it is on the processor too, if not it is an
     // interboundary processor cell
     if(nei != -1) {
       if(maingrid->part[nei] != myproc)
         return 2;
       // if we didn't get the hit we need to pass this downstream
-      // to be checked by the next part of the halo, so pass the 
-      // current cell to be evaluated (and how to evaluate it 
+      // to be checked by the next part of the halo, so pass the
+      // current cell to be evaluated (and how to evaluate it
       // via the next entry on the halo list).
       /* now process other items on the list, if any */
 
@@ -1254,7 +1254,7 @@ static int IsBoundaryCellByEdge(int cell, gridT *maingrid, int myproc,
  * Usage: IsBoundaryCellByNode(cell,maingrid,myproc);
  * -----------------------------------------
  * Determines whether or not the global cell index
- * i is a boundary cell. 
+ * i is a boundary cell.
  * Returns:
  *   2 if this is an inner interproc boundary cell.
  *  -1 for no hit
@@ -1274,14 +1274,14 @@ static int IsBoundaryCellByNode(int cell, gridT *maingrid, int myproc,
       // get the nodal cell neighbors
       nei = maingrid->pcneighs[in][nn];
       // if any neighbor is not a ghost cell check to see
-      // if it is on the processor too, if not it is an 
+      // if it is on the processor too, if not it is an
       // interboundary processor cell
       if(nei != -1) {
         if(maingrid->part[nei] != myproc)
           return 2;
         // if we didn't get the hit we need to pass this downstream
-        // to be checked by the next part of the halo, so pass the 
-        // current cell to be evaluated (and how to evaluate it 
+        // to be checked by the next part of the halo, so pass the
+        // current cell to be evaluated (and how to evaluate it
         // via the next entry on the halo list).
         /* now process other items on the list, if any */
 
@@ -1370,8 +1370,8 @@ static void FreeGrid(gridT *grid, int numprocs)
   SunFree(grid->xadj,(grid->Nc+1)*sizeof(int),"FreeGrid");
   SunFree(grid->vtxdist,VTXDISTMAX,"FreeGrid");
 
-  for(proc=0;proc<numprocs;proc++) 
-    SunFree(grid->neighs[proc],numprocs*sizeof(int),"FreeGrid");
+  for(proc=0;proc<numprocs;proc++)
+  SunFree(grid->neighs[proc],numprocs*sizeof(int),"FreeGrid");
   SunFree(grid->neighs,numprocs*sizeof(int *),"FreeGrid");
   SunFree(grid->numneighs,numprocs*sizeof(int),"FreeGrid");
 
@@ -1447,7 +1447,7 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   (*localgrid)->Nkmax = maingrid->Nkmax;
   (*localgrid)->dz = (REAL *)SunMalloc((*localgrid)->Nkmax*sizeof(REAL),"VertGrid");
   // transfer grid spacing from global grid on proc to local grid on proc
-  for(k=0;k<(*localgrid)->Nkmax;k++) 
+  for(k=0;k<(*localgrid)->Nkmax;k++)
     (*localgrid)->dz[k]=maingrid->dz[k];
 
   maingrid->Nk = (int *)SunMalloc(maingrid->Nc*sizeof(int),"VertGrid");
@@ -1464,8 +1464,8 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
 
   // for each local cell set number of layers (3D problem)
   if((*localgrid)->Nkmax>1) {
-    for(i=0;i<(*localgrid)->Nc;i++) 
-      if((*localgrid)->dv[i]==dmax) 
+    for(i=0;i<(*localgrid)->Nc;i++)
+      if((*localgrid)->dv[i]==dmax)
         (*localgrid)->Nk[i] = (*localgrid)->Nkmax;
       else {
         dmaxtest=0;
@@ -1473,24 +1473,24 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
           // add up the cumulative cell depth until it exceeds the actual depth
           dmaxtest+=(*localgrid)->dz[k];
           (*localgrid)->Nk[i] = k+1;
-          if(dmaxtest>=(*localgrid)->dv[i]) 
+          if(dmaxtest>=(*localgrid)->dv[i])
             break;
         }
       }
     // for each global cell set number of layeres (similarly)
-    for(i=0;i<maingrid->Nc;i++) 
-      if(maingrid->dv[i]==dmax) 
+    for(i=0;i<maingrid->Nc;i++)
+      if(maingrid->dv[i]==dmax)
         maingrid->Nk[i] = maingrid->Nkmax;
       else {
         dmaxtest=0;
         for(k=0;k<maingrid->Nkmax;k++) {
           dmaxtest+=maingrid->dz[k];
           maingrid->Nk[i] = k+1;
-          if(dmaxtest>=maingrid->dv[i]) 
+          if(dmaxtest>=maingrid->dv[i])
             break;
         }
       }
-  } 
+  }
   // 2D problem
   else {
     for(i=0;i<(*localgrid)->Nc;i++)
@@ -1510,9 +1510,9 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
     (*localgrid)->etop[j] = 0;
     (*localgrid)->etopold[j] = 0;
   }
-  
+
   // To use stair-stepping do this (not partial-stepping).
-  if(stairstep) 
+  if(stairstep)
     for(i=0;i<(*localgrid)->Nc;i++) {
       dmaxtest=0;
       for(k=0;k<(*localgrid)->Nk[i];k++)
@@ -1521,7 +1521,7 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
       (*localgrid)->dv[i]=dmaxtest;
     }
 
-  // over all the local grid edges 
+  // over all the local grid edges
   for(j=0;j<(*localgrid)->Ne;j++) {
     // get clogal grid pointers
     ne = (*localgrid)->eptr[j];
@@ -1539,21 +1539,21 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
     }
     // if we have a computational cell (not by ghost cell)
     else {
-      // if we don't have the same number of layers for 
-      // adjacent cells 
+      // if we don't have the same number of layers for
+      // adjacent cells
       if(maingrid->Nk[maingrid->grad[2*ne]]<
           maingrid->Nk[maingrid->grad[2*ne+1]]) {
         // (Nke is edge layers which is smaller
         // than Nkc which is cell layers)
         (*localgrid)->Nke[j]=maingrid->Nk[maingrid->grad[2*ne]];
         (*localgrid)->Nkc[j]=maingrid->Nk[maingrid->grad[2*ne+1]];
-      } 
+      }
       // other case (switched orientation)
       else if(maingrid->Nk[maingrid->grad[2*ne]]>
           maingrid->Nk[maingrid->grad[2*ne+1]]) {
         (*localgrid)->Nke[j]=maingrid->Nk[maingrid->grad[2*ne+1]];
         (*localgrid)->Nkc[j]=maingrid->Nk[maingrid->grad[2*ne]];
-      } 
+      }
       else {
         // case where the cell layers are the same Nke=Nkc=Nk
         (*localgrid)->Nke[j]=maingrid->Nk[maingrid->grad[2*ne]];
@@ -1567,7 +1567,7 @@ static void VertGrid(gridT *maingrid, gridT **localgrid, MPI_Comm comm)
   for(i = 0; i < (*localgrid)->Np; i++) {
     // look over its cell neighbors and take the max of Nkc
     // for each of the cell neighbors
-    
+
     maxNk = (*localgrid)->Nk[(*localgrid)->pcneighs[i][0]];
     for(npc = 1; npc < (*localgrid)->numpcneighs[i]; npc++) {
       // find the max
@@ -1729,7 +1729,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
 
   // for each of the neighboring processors
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
-    
+
     // get number of neighboring processor
     neighproc=(*localgrid)->myneighs[neigh];
 
@@ -1742,9 +1742,9 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
         num_cells_recv[neigh]++;
       }
     }
-    
-    // allocae memory now that we have count of cells to be recieved (just based on 
-    // coloring from the partitioning and should be automatically updated if the 
+
+    // allocae memory now that we have count of cells to be recieved (just based on
+    // coloring from the partitioning and should be automatically updated if the
     // part array is set to be based on nodes instead of edges)
     cell_recv[neigh]=(int *)SunMalloc(num_cells_recv[neigh]*sizeof(int),"MakePointers");
 
@@ -1761,7 +1761,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
     }
   }
   // debug information for processor passing
-  if(VERBOSE>2) 
+  if(VERBOSE>2)
     for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++)
       printf("Proc: %d, neighbor %d, receiving %d\n",
 	     myproc,(*localgrid)->myneighs[neigh],
@@ -1769,13 +1769,13 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
 
   // Send out the number of cells that are being received and then
   // the actual global indices being sent.
- 
+
   // send data
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
     // over each of the neighboring processors
     neighproc=(*localgrid)->myneighs[neigh];
-    // send the amount of data that must be transfered 
-    MPI_Send(&(num_cells_recv[neigh]),1,MPI_INT,neighproc,1,comm); 
+    // send the amount of data that must be transfered
+    MPI_Send(&(num_cells_recv[neigh]),1,MPI_INT,neighproc,1,comm);
   }
 
   // recieve sent data
@@ -1787,7 +1787,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
   // send data
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
     neighproc=(*localgrid)->myneighs[neigh];
-    MPI_Send(cell_recv[neigh],num_cells_recv[neigh],MPI_INT,neighproc,1,comm); 
+    MPI_Send(cell_recv[neigh],num_cells_recv[neigh],MPI_INT,neighproc,1,comm);
   }
 
   // receive data
@@ -1799,7 +1799,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
 
   // Now set the indices to point to the local grid.
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
-    for(j=0;j<num_cells_send[neigh];j++) 
+    for(j=0;j<num_cells_send[neigh];j++)
       // flipping from global to local coordinates
       cell_send[neigh][j]=lcptr[cell_send[neigh][j]];
     for(j=0;j<num_cells_recv[neigh];j++)
@@ -1817,9 +1817,9 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
     // for each edge initialize the flag
     for(j=0;j<(*localgrid)->Ne;j++)
       flagged[j]=0;
-    // for each of the boundary cells 
+    // for each of the boundary cells
     for(i=0;i<num_cells_send[neigh];i++)
-      // for each of the faces 
+      // for each of the faces
       for(nf=0;nf<(*localgrid)->nfaces[cell_send[neigh][i]];nf++)
         // check to make sure the particular edge hasn't been flagged
         if(!flagged[(*localgrid)->face[(*localgrid)->maxfaces*cell_send[neigh][i]+nf]]) {
@@ -1832,7 +1832,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
     for(j=0;j<(*localgrid)->Ne;j++)
       flagged[j]=0;
     k=0;
-    // compute sent data (edge pointers) 
+    // compute sent data (edge pointers)
     for(i=0;i<num_cells_send[neigh];i++)
       for(nf=0;nf<(*localgrid)->nfaces[cell_send[neigh][i]];nf++)
         if(!flagged[(*localgrid)->face[(*localgrid)->maxfaces*cell_send[neigh][i]+nf]]) {
@@ -1841,7 +1841,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
             (*localgrid)->eptr[(*localgrid)->face[(*localgrid)->maxfaces*cell_send[neigh][i]+nf]];
         }
     // send data (number of edges on neighbor)
-    MPI_Send(&(num_edges_send[neigh]),1,MPI_INT,neighproc,1,comm); 
+    MPI_Send(&(num_edges_send[neigh]),1,MPI_INT,neighproc,1,comm);
   }
 
   // recieve data
@@ -1853,7 +1853,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
   // send data (edges data)
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
     neighproc=(*localgrid)->myneighs[neigh];
-    MPI_Send(edge_send[neigh],num_edges_send[neigh],MPI_INT,neighproc,1,comm); 
+    MPI_Send(edge_send[neigh],num_edges_send[neigh],MPI_INT,neighproc,1,comm);
   }
 
   // receive data
@@ -1867,7 +1867,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
   for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
     for(j=0;j<num_edges_send[neigh];j++)
       edge_send[neigh][j]=leptr[edge_send[neigh][j]];
-    for(j=0;j<num_edges_recv[neigh];j++) 
+    for(j=0;j<num_edges_recv[neigh];j++)
       edge_recv[neigh][j]=leptr[edge_recv[neigh][j]];
   }
 
@@ -1889,7 +1889,7 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
       for(j=0;j<num_cells_recv[neigh];j++)
         printf("%d ",cell_recv[neigh][j]);
       printf("\n");
-    }    
+    }
 
     printf("EDGES: \n");
     for(neigh=0;neigh<(*localgrid)->Nneighs;neigh++) {
@@ -1931,9 +1931,9 @@ static void MakePointers(gridT *maingrid, gridT **localgrid, int myproc, MPI_Com
  * Function: ReOrder
  * Usage:  ReOrder(grid)
  * -------------------------
- * Functon to reorder grid 
+ * Functon to reorder grid
  */
-static void ReOrder(gridT *grid) 
+static void ReOrder(gridT *grid)
 {
   int n, nf, numflag, options[8], Nc = grid->Nc, Ne=grid->Ne, grad1, grad2, enei;
   int *corder, *corderp, *eorder, *eorderp;
@@ -2007,18 +2007,18 @@ static void ReOrder(gridT *grid)
   // because reordering does not necessarily guarantee that the ordering of
   // the faces in the face array are in the same as the corresponding neighbors
   // in the neigh array.
-  for(n=0;n<Nc;n++) 
-    for(nf=0;nf<grid->nfaces[n];nf++) 
+  for(n=0;n<Nc;n++)
+    for(nf=0;nf<grid->nfaces[n];nf++)
       tmp[n*grid->maxfaces+nf]=grid->face[n*grid->maxfaces+nf];
-  for(n=0;n<Nc;n++) 
-    for(nf=0;nf<grid->nfaces[n];nf++) 
+  for(n=0;n<Nc;n++)
+    for(nf=0;nf<grid->nfaces[n];nf++)
       grid->face[n*grid->maxfaces+nf]=eorderp[(int)(tmp[n*grid->maxfaces+nf])];
 
   for(n=0;n<Ne;n++)
     grad1=grid->grad[2*n];
     grad2=grid->grad[2*n+1];
     enei=grad1+grad2-2;
-    for(nf=0;nf<enei;nf++) 
+    for(nf=0;nf<enei;nf++)
       tmp[2*(grid->maxfaces-1)*n+nf]=grid->eneigh[2*(grid->maxfaces-1)*n+nf];
   for(n=0;n<Ne;n++)
     grad1=grid->grad[2*n];
@@ -2062,7 +2062,7 @@ static void ReOrder(gridT *grid)
  * Function: EdgeMarkers
  * Usage: EdgeMarkers(maingrid, localgrid, myproc)
  * --------------------------------
- * Compute interprocessor edge markers where 
+ * Compute interprocessor edge markers where
  *    mark = 5    edge is a ghost cell on interprocessor
  *                boundary
  *    mark = 6    edge is ghost or computational but not
@@ -2084,13 +2084,13 @@ static void EdgeMarkers(gridT *maingrid, gridT **localgrid, int myproc)
         // get the edge information
         ne = (*localgrid)->face[n*(*localgrid)->maxfaces+nf];
         // if the edge is marked as ghost or computational
-        if(!(*localgrid)->mark[ne]) 
+        if(!(*localgrid)->mark[ne])
           // we have type 6 boundary condition
           (*localgrid)->mark[ne]=6;
       }
     }
   }
-  // for each cell on the local grid 
+  // for each cell on the local grid
   for(n=0;n<(*localgrid)->Nc;n++) {
     // if the cell is an inter processor boundary cell
     if(IsBoundaryCell((*localgrid)->mnptr[n],maingrid,myproc)==2) {
@@ -2099,16 +2099,16 @@ static void EdgeMarkers(gridT *maingrid, gridT **localgrid, int myproc)
         // get local edge ponter
         ne = (*localgrid)->face[n*(*localgrid)->maxfaces+nf];
         // if the marked cell has an edge which is marked as
-        // ghost or computational but we know it is an 
+        // ghost or computational but we know it is an
         // interproc boundary, mark as 5
-        if((*localgrid)->mark[ne]==6) 
+        if((*localgrid)->mark[ne]==6)
           (*localgrid)->mark[ne]=5;
       }
     }
   }
   //MR - Check to make sure that edges near type-3 boundaries are connected
   // Type 3 boundaries are returned when IsBoundaryCell() == 1
-  // for each cell on the local grid 
+  // for each cell on the local grid
   for(n=0;n<(*localgrid)->Nc;n++) {
     // if the cell is a type 3 boundary
     if(IsBoundaryCell((*localgrid)->mnptr[n],maingrid,myproc)==1) {
@@ -2117,9 +2117,9 @@ static void EdgeMarkers(gridT *maingrid, gridT **localgrid, int myproc)
         // get local edge ponter
         ne = (*localgrid)->face[n*(*localgrid)->maxfaces+nf];
         // if the marked cell has an edge which is marked as
-        // ghost or computational but we know it is an 
+        // ghost or computational but we know it is an
         // interproc boundary, mark as 5
-        if((*localgrid)->mark[ne]==6) 
+        if((*localgrid)->mark[ne]==6)
           (*localgrid)->mark[ne]=5;
       }
     }
@@ -2146,9 +2146,9 @@ int GetNumCells(gridT *grid, int proc)
     // by determining if any of it's neighbors are local to the
     // processor
     flag = IsNeighborLocal(j,grid,proc, g_halolist, g_halolistsize);
-    // if the current cell is on the processor or if it's 
+    // if the current cell is on the processor or if it's
     // neighbor is on the processor (indicating cell j
-    //PJw is a ghost point), then we can add this cell to the 
+    //PJw is a ghost point), then we can add this cell to the
     // total number of cells on the processor
     if(grid->part[j]==proc || flag==1) {
       ncells++;
@@ -2173,7 +2173,7 @@ int GetNumEdges(gridT *grid)
   unsigned short *flagged = (unsigned short *)SunMalloc(grid->Nc*sizeof(unsigned short),"GetNumEdges");
 
   //  initiallize all flags corresponding to local cell to 0
-  for(j=0;j<grid->Nc;j++) 
+  for(j=0;j<grid->Nc;j++)
     flagged[j]=0;
 
   nedges=0;
@@ -2181,7 +2181,7 @@ int GetNumEdges(gridT *grid)
   for(j=0;j<grid->Nc;j++) {
     // mark that the cell has already been considered
     flagged[j]=1;
-    // over each of the faces consider the neighbor to 
+    // over each of the faces consider the neighbor to
     // the edge
     for(nf=0;nf<grid->nfaces[j];nf++) {
       ne = grid->neigh[j*grid->maxfaces+nf];
@@ -2227,7 +2227,7 @@ int GetNumPoints(gridT *localgrid, gridT *maingrid)
     np1 = localgrid->edges[NUMEDGECOLUMNS*j];
     np2 = localgrid->edges[NUMEDGECOLUMNS*j+1];
     // mark that the points forming the edge have already been considered
-    flagged[np1]=1; 
+    flagged[np1]=1;
     flagged[np2]=1;
   }
   // sum up all the flagged values to get the total number of points
@@ -2261,13 +2261,13 @@ void GetProcPoints(gridT *localgrid, gridT *maingrid)
 
   // note that sum of all processors number of local points will be greater than the
   // actual number of points since points on the boundary will be counted more than once.
-  // this also means that the nodal neighbors for these points will be bogus as only the 
-  // non-halo points will make sense and have the same nodal data structure as found in 
-  // global.  The most extreme boundary points will only have partial data compared to 
+  // this also means that the nodal neighbors for these points will be bogus as only the
+  // non-halo points will make sense and have the same nodal data structure as found in
+  // global.  The most extreme boundary points will only have partial data compared to
   // the global and should never be  called.  This is expected.  Thus, the most
   // rigorous way to set this up is so that the sum of all the processor points is the
   // global number of points. The definition gets looser for ELM anyway so this condition
-  // isn't necessary are will only be minorly related to efficiency (at leaset it 
+  // isn't necessary are will only be minorly related to efficiency (at leaset it
   // seems that way for now)
 
   // assume for now that we have only the points from the main grid
@@ -2277,12 +2277,12 @@ void GetProcPoints(gridT *localgrid, gridT *maingrid)
     flagged[j]=1;
   }
 
-  // allocate the memory from the previous computation of the total number of 
+  // allocate the memory from the previous computation of the total number of
   // points on the localgrid
   localgrid->localtoglobalpoints = (int *)SunMalloc(localgrid->Np*sizeof(int),"GetProcPoints");
 
   // make list with all the flagged values and check the total number of points
-  // this may not be necessary just make sure to pass the total number of 
+  // this may not be necessary just make sure to pass the total number of
   // points
   npoints = 0;
   for(j=0; j < maingrid->Np; j++) {
@@ -2301,7 +2301,7 @@ void GetProcPoints(gridT *localgrid, gridT *maingrid)
  * Determine if the cell is neighboring processor neighproc
  *
  */
-int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid, 
+int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid,
     int myproc, int neighproc)
 {
   int nf, ne;
@@ -2320,7 +2320,7 @@ int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid,
   for(nf=0;nf<localgrid->nfaces[nc];nf++) {
     ne = localgrid->neigh[nc*localgrid->maxfaces+nf];
     if(ne != -1)
-      // for non-ghost cell if neighboring processor is 
+      // for non-ghost cell if neighboring processor is
       // on neighproc
       if(maingrid->part[localgrid->mnptr[ne]] == neighproc)
         return 1;
@@ -2335,7 +2335,7 @@ int IsCellNeighborProc(int nc, gridT *maingrid, gridT *localgrid,
  * Determine if the edge is neighboring neighproc
  *
  */
-int IsEdgeNeighborProc(int ne, gridT *maingrid, gridT *localgrid, 
+int IsEdgeNeighborProc(int ne, gridT *maingrid, gridT *localgrid,
     int myproc, int neighproc)
 {
   int j, cnp, nc;
@@ -2356,14 +2356,14 @@ int IsEdgeNeighborProc(int ne, gridT *maingrid, gridT *localgrid,
  * Function: IsNodeNeighborProc
  * Usage: IsNodeNeighborProc(np, maingrid, localgrid, myproc, neighproc)
  * ----------------------------------------------------
- * Determine if the node is neighboring neighproc.  
+ * Determine if the node is neighboring neighproc.
  *
  */
-int IsNodeNeighborProc(int np, gridT *maingrid, gridT *localgrid, 
+int IsNodeNeighborProc(int np, gridT *maingrid, gridT *localgrid,
 		       int myproc, int neighproc)
 {
   printf("Header for IsNodeNeighborProc.  Note implemented yet!!!\n");
-  
+
   return -1;
 }
 
@@ -2373,9 +2373,9 @@ int IsNodeNeighborProc(int np, gridT *maingrid, gridT *localgrid,
  * ----------------------------------------------------
  * Compute the number of neighbors for each processor and
  * determine the processor ids of each neighbor.  This function
- * effectively computes grid->numneighs, grid->neighs, 
- * localgrid->Nneighs, and localgrid->myneighs, which is used 
- * to set up passing of the interprocessor boundary values within 
+ * effectively computes grid->numneighs, grid->neighs,
+ * localgrid->Nneighs, and localgrid->myneighs, which is used
+ * to set up passing of the interprocessor boundary values within
  * MakePointers.
  *
  */
@@ -2399,16 +2399,16 @@ void Topology(gridT **maingrid, gridT **localgrid, int myproc, int numprocs)
     (*maingrid)->neighs[proc]=(int *)SunMalloc(numprocs*sizeof(int),"Topology");
     // initialize all neighboring processors to be -1 (ghost) until otherwise noted
     // where proc is in the set 0...numprocs
-    for(j=0;j<numprocs;j++) 
+    for(j=0;j<numprocs;j++)
       (*maingrid)->neighs[proc][j]=-1;
   }
 
   BoundaryTopologyByHalo(*maingrid, numprocs, g_halolist, g_halolistsize);
-  
+
 
   // transfer the number of neighbors information to the local grids
   // irrspective of method used to find them
-  // maingrid->numneighs => localgrid->Nneighs and 
+  // maingrid->numneighs => localgrid->Nneighs and
   // maingrid->neighs    => localgrid->myneighs
   (*localgrid)->Nneighs=(*maingrid)->numneighs[myproc];
   // allocate memory for the list of neighboring processors to the local grid
@@ -2426,28 +2426,28 @@ void Topology(gridT **maingrid, gridT **localgrid, int myproc, int numprocs)
  * Function: BoundaryTopology
  * Usage: BoundaryTopology(*maingrid, numprocs);
  * ----------------------------------------------------
- * Called by Topology and used to compute the number 
+ * Called by Topology and used to compute the number
  * of neighbors for each processor and
  * determine the processor ids of each neighbor by using
- * shared edges to determine the boundary cells.  
- * This function effectively computes 
- * grid->numneighs, grid->neighs. 
+ * shared edges to determine the boundary cells.
+ * This function effectively computes
+ * grid->numneighs, grid->neighs.
  * These are both of size [numprocs][numprocs]
  * This function only shows how processor regions are
- * connected and says nothing about how cells are 
+ * connected and says nothing about how cells are
  * connected.  The criteria is selectable by edge or node.
  *
  */
-static void  BoundaryTopologyByHalo(gridT *maingrid, int numprocs, 
+static void  BoundaryTopologyByHalo(gridT *maingrid, int numprocs,
     boundaryselection *list, int listsize)
 {
-  int j; 
+  int j;
 
   // if we don't have a good list, exit
   if(listsize < 1) {
     printf("Error!!: List for boundary neighbors needs to be larger!\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
 
   // over each cell for the whole domain
@@ -2474,21 +2474,21 @@ static void  BoundaryTopologyByHalo(gridT *maingrid, int numprocs,
  * Function: BoundaryTopologyByEdge
  * Usage: BoundaryTopologyByEdge(*maingrid, numprocs);
  * ----------------------------------------------------
- * Called by Topology and used to compute the number 
+ * Called by Topology and used to compute the number
  * of neighbors for each processor and
  * determine the processor ids of each neighbor by using
- * shared edges to determine the boundary cells.  
- * This function effectively computes 
- * grid->numneighs, grid->neighs. 
+ * shared edges to determine the boundary cells.
+ * This function effectively computes
+ * grid->numneighs, grid->neighs.
  * These are both of size [numprocs][numprocs]
  * This function only shows how processor regions are
- * connected and says nothing about how cells are 
- * connected.  The criteria is for processors which 
+ * connected and says nothing about how cells are
+ * connected.  The criteria is for processors which
  * share the same edge (i.e. cells on different processors
  * have the same edge).
  *
  */
-static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid, 
+static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
     int numprocs, boundaryselection *list, int listsize)
 {
   int nf, cfneigh, loc, pcell, pneigh;
@@ -2497,12 +2497,12 @@ static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
   if(listsize < 0) {
     printf("Error!!: List for boundary edge neighbors needs to be larger!\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
 
-  // consider each face (edge) on the cells 
+  // consider each face (edge) on the cells
   for(nf=0;nf < maingrid->nfaces[cell]; nf++) {
-    // if the neighbor to the cell's face (cfneigh) is not a ghost 
+    // if the neighbor to the cell's face (cfneigh) is not a ghost
     cfneigh = maingrid->neigh[maingrid->maxfaces*cell+nf];
     // check to see if the cell should be added to the boundary
     if(cfneigh != -1) {
@@ -2511,8 +2511,8 @@ static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
       pneigh = maingrid->part[cfneigh];
       // if the cell proc (pcell) is not the same as it's neighbor's proc (pneigh)
       if(pcell != pneigh) {
-        // loc will only show up if it has already been added to list, 
-        // meaning pneigh has been recorded as a neighboor of pcell if it has, do 
+        // loc will only show up if it has already been added to list,
+        // meaning pneigh has been recorded as a neighboor of pcell if it has, do
         // nothing, otherwise add it to the list
         loc = IsMember(pneigh,maingrid->neighs[pcell],numprocs);
         if(loc<0) {
@@ -2536,7 +2536,7 @@ static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
             break;
           case NODE:
             // new selection based on nodal neighbors (more inclusive)
-            BoundaryTopologyByNode(cellbase, cfneigh, maingrid, numprocs, 
+            BoundaryTopologyByNode(cellbase, cfneigh, maingrid, numprocs,
                 &list[1], listsize-1);
             break;
           default:
@@ -2552,21 +2552,21 @@ static void  BoundaryTopologyByEdge(int cellbase, int cell, gridT *maingrid,
  * Function: BoundaryTopologyByNode
  * Usage: BoundaryTopologyByNode(*maingrid, numprocs);
  * ----------------------------------------------------
- * Called by Topology and used to compute the number 
+ * Called by Topology and used to compute the number
  * of neighbors for each processor and
  * determine the processor ids of each neighbor by using
- * shared edges to determine the boundary cells.  
- * This function effectively computes 
- * grid->numneighs, grid->neighs. 
+ * shared edges to determine the boundary cells.
+ * This function effectively computes
+ * grid->numneighs, grid->neighs.
  * These are both of size [numprocs][numprocs]
  * This function only shows how processor regions are
- * connected and says nothing about how cells are 
+ * connected and says nothing about how cells are
  * connected.  The criteria is for processors which share
  * the same node (i.e. cells on different processors
  * have the same node)
  *
  */
-static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid, 
+static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
     int numprocs, boundaryselection *list, int listsize)
 {
 //  printf("NODE\n");
@@ -2576,10 +2576,10 @@ static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
   if(listsize < 0) {
     printf("Error!!: List for boundary node neighbors needs to be larger!\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
 
-  // consider each node on the cells 
+  // consider each node on the cells
   for(nf=0;nf < maingrid->nfaces[cell]; nf++) {
     // get the particular node
     in = maingrid->cells[maingrid->maxfaces*cell + nf];
@@ -2587,15 +2587,15 @@ static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
     for(nn = 0; nn < maingrid->numpcneighs[in]; nn++) {
       // get nodal cell neighbor
       cpneigh = maingrid->pcneighs[in][nn];
-      // if the neighbor to the cell's node (cpneigh) is not a ghost 
+      // if the neighbor to the cell's node (cpneigh) is not a ghost
       if(cpneigh != -1) {
         // get the cell processors (compare with base)
         pcell = maingrid->part[cellbase];
         pneigh = maingrid->part[cpneigh];
         // if the cell proc (pcell) is not the same as it's neighbor's proc (pneigh)
         if(pcell != pneigh) {
-          // loc will only show up if it has already been added to list, 
-          // meaning pneigh has been recorded as a neighboor of pcell if it has, do 
+          // loc will only show up if it has already been added to list,
+          // meaning pneigh has been recorded as a neighboor of pcell if it has, do
           // nothing, otherwise add it to the list
           loc = IsMember(pneigh,maingrid->neighs[pcell],numprocs);
           if(loc<0) {
@@ -2614,12 +2614,12 @@ static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
           switch(list[1]) {
             case EDGE:
               // original selection by edge
-              BoundaryTopologyByEdge(cellbase, cpneigh, maingrid, numprocs, 
+              BoundaryTopologyByEdge(cellbase, cpneigh, maingrid, numprocs,
                   &list[1], listsize-1);
               break;
             case NODE:
               // new selection based on nodal neighbors (more inclusive)
-              BoundaryTopologyByNode(cellbase, cpneigh, maingrid, numprocs, 
+              BoundaryTopologyByNode(cellbase, cpneigh, maingrid, numprocs,
                   &list[1], listsize-1);
               break;
             default:
@@ -2638,15 +2638,15 @@ static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
  * Usage: TransferData(maingrid,localgrid,myproc);
  * -----------------------------------------------
  *
- * This function transfers cell data from the main grid onto the local 
+ * This function transfers cell data from the main grid onto the local
  * grid and creates the global pointer that allows the identification of
- * the global cell index given a local index.  Because the main grid 
+ * the global cell index given a local index.  Because the main grid
  * is stored on every processor, no communcation is needed. The computational
  * cells are printed first, followed by the boundary cells.
  *
  * If only edge neighbors are considered:
  * The local grid will have new ghost cells due to the cut edges.
- * There is one ghost cell for each cut edge.  
+ * There is one ghost cell for each cut edge.
  * If nodal neighbors are considered:
  * The local grid will have new ghost cells due to cut edges where
  * all nodal neighbors (or halo neighbors) to the cut cell node
@@ -2661,9 +2661,9 @@ static void  BoundaryTopologyByNode(int cellbase, int cell, gridT *maingrid,
  * and is stored on every local grid.
  *
  */
-// may need to make the local cells array pointer to indicies in the 
-// local array which is converted via localgrid->localtoglobalpoints 
-// will need to make cells point to indicies in the local xp,yp arrays, 
+// may need to make the local cells array pointer to indicies in the
+// local array which is converted via localgrid->localtoglobalpoints
+// will need to make cells point to indicies in the local xp,yp arrays,
 // as these are loaded in ReadData and stored with node data, so the global
 // index is no longer needed and a local index will suffice.  Since it is only
 // used in nodal calculations it should be easily changed.
@@ -2671,18 +2671,18 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
 {
   // allocate memory for all referential pointers and localgrid memory
   int i, j, k, n, nc, nf, ne, ng, flag, mgptr, *lcptr, *leptr, bctype, iface, grad1, grad2, enei;
-  unsigned short *flagged = 
+  unsigned short *flagged =
     (unsigned short *)SunMalloc(maingrid->Ne*sizeof(unsigned short),"TransferData");
 
   // pointers from maingrid to localgrid for cells and edges
   lcptr = (int *)SunMalloc(maingrid->Nc*sizeof(int),"TransferData");
   leptr = (int *)SunMalloc(maingrid->Ne*sizeof(int),"TransferData");
 
-  // this GetNumCells relies upon topology and setting the number of 
+  // this GetNumCells relies upon topology and setting the number of
   // cells for each proc
   (*localgrid)->Nc = GetNumCells(maingrid,myproc);
-  (*localgrid)->maxfaces = maingrid->maxfaces;   // added part 
-  // pointer to main grid for the number of cells on the local grid 
+  (*localgrid)->maxfaces = maingrid->maxfaces;   // added part
+  // pointer to main grid for the number of cells on the local grid
   // and weightings allocated
   (*localgrid)->mnptr = (int *)SunMalloc((*localgrid)->Nc*sizeof(int),
       "TransferData");
@@ -2705,28 +2705,28 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
     (*localgrid)->yp[j] = maingrid->yp[j];
   }
 
-  // this neigh critierion will need to be adapted 
+  // this neigh critierion will need to be adapted
   // to account for nodal neighbors, not edge neighbors
   (*localgrid)->neigh = (int *)SunMalloc((*localgrid)->maxfaces*(*localgrid)->Nc*sizeof(int),
       "TransferData");
   (*localgrid)->normal = (int *)SunMalloc((*localgrid)->maxfaces*(*localgrid)->Nc*sizeof(int),
       "TransferData");
-      
+
   // initialize lcptr and leptr pointers to ghost (non-existent) criterion
-  for(j=0;j<maingrid->Nc;j++) 
+  for(j=0;j<maingrid->Nc;j++)
     lcptr[j]=-1;
-  for(j=0;j<maingrid->Ne;j++) 
+  for(j=0;j<maingrid->Ne;j++)
     leptr[j]=-1;
 
   // populate maingrid->lcptr, localgrid->mnptr, transver xv, yv, dv, vwgt, cells
-  // this function utilizes the test to see if a cell is a boundary cell 
+  // this function utilizes the test to see if a cell is a boundary cell
   // needed to determine if it is to be included in the list
   // currently this utilizes edge values via IsBoundaryCEllByEdge
   k=0;
-  // MAXBCTYPES = 4 for now, check each boundary condition type 
+  // MAXBCTYPES = 4 for now, check each boundary condition type
   // (could be more efficient, probably
   // as the only BC type that we utilize is really the type 3 (aliased to bctype-1)
-  // could just do the conditional test for all the BC types 
+  // could just do the conditional test for all the BC types
   // (Spell out in line IsBoundaryCell...)
   for(bctype=0;bctype<MAXBCTYPES;bctype++) {
     // loop over all the main grid cells
@@ -2736,13 +2736,13 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
       // not edge like type 2 or 4)
       if(IsBoundaryCell(j,maingrid,myproc)==bctype) {
 
-        // check all the neighbors and for non-ghost cells 
+        // check all the neighbors and for non-ghost cells
         // which have the same processor as myproc, return flag = 1
         // flag = 1 if interprocessor boundary that's not a ghost cell
         // could be replaced by IsBoundaryCell == 2 means flag = 1
 
         // will need to generalize this for nodal neighbors
-        // 
+        //
         // if(IsNeighborLocal(cell, maingrid, processor)) for
         // (IsNeighborByEdgeLocal and IsNeighborByNodeLocal and such)
         // then set flag is 1, else 0
@@ -2751,13 +2751,13 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
 
         flag = IsNeighborLocal(j,maingrid,myproc, g_halolist, g_halolistsize);
 
-        // if we have a previous hit or the cell is on the processor, 
+        // if we have a previous hit or the cell is on the processor,
         //add to the structure
         // to index local cells to global cells
-        // if it has been flagged because one of it's neighbors is on the 
+        // if it has been flagged because one of it's neighbors is on the
         // local processor or the cell is on the local processor
         if(flag==1 || maingrid->part[j]==myproc) {
-          // the local pointer points to list of cells 
+          // the local pointer points to list of cells
           // on local processor from global value
           lcptr[j]=k;
           // get the pointer from the local array (k) to main array (j)
@@ -2768,7 +2768,7 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
           (*localgrid)->yv[k]=maingrid->yv[j];
           (	*localgrid)->dv[k]=maingrid->dv[j];
           (*localgrid)->vwgt[k]=maingrid->vwgt[j];
-          // for each face connect cell pointer with pointers to 
+          // for each face connect cell pointer with pointers to
           // points that make up a cell (not edges)
           for(nf=0;nf<maingrid->nfaces[j];nf++)
             // pointers to the points comprising the cell
@@ -2799,7 +2799,7 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
     }
   }
 
-  // compute the number of edges for the local grid including edges 
+  // compute the number of edges for the local grid including edges
   // on a boundary (ghost edges)
 
   // allocate edge data
@@ -2820,9 +2820,9 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
       "TransferData");
   (*localgrid)->gradf = (int *)SunMalloc(2*(*localgrid)->Ne*sizeof(int),
       "TransferData");
-  // populate maingrid->leptr, localgrid->eptr, localgrid->edges 
+  // populate maingrid->leptr, localgrid->eptr, localgrid->edges
   // initialize all edge flags to 0
-  for(j=0;j<maingrid->Ne;j++) 
+  for(j=0;j<maingrid->Ne;j++)
     flagged[j]=0;
 
   k=0;
@@ -2864,39 +2864,39 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
       for(j=0;j<2;j++) {
         // initialize all neighbors to voronoi edge to ghost
         (*localgrid)->grad[2*n+j]=-1;
-        // get voronoi edge neighbors from maingrid 
+        // get voronoi edge neighbors from maingrid
         nc = maingrid->grad[2*(*localgrid)->eptr[n]+j];
-        // and if they aren't ghost make the connection between the 
+        // and if they aren't ghost make the connection between the
         // local gradient and the local cell via the global information
         if(nc != -1)
           (*localgrid)->grad[2*n+j]=lcptr[nc];
       }
     }
-  }  
+  }
 
-  // create face and normal arrays now for the local grid 
+  // create face and normal arrays now for the local grid
   // (previously called for global grid)
   // check whether variables are right
 
   CreateFaceArray((*localgrid)->grad,(*localgrid)->gradf,(*localgrid)->neigh,
       (*localgrid)->face,(*localgrid)->nfaces,(*localgrid)->maxfaces,(*localgrid)->Nc,(*localgrid)->Ne);
-  
+
   if((*localgrid)->maxfaces==3)
       ReorderCellPoints((*localgrid)->face,(*localgrid)->edges,(*localgrid)->cells,(*localgrid)->nfaces,(*localgrid)->maxfaces,(*localgrid)->Nc);
 
-  // there is no need to use Reordergradf here because face and gradf is already in order for maingrid 
-  
+  // there is no need to use Reordergradf here because face and gradf is already in order for maingrid
+
   CreateNormalArray((*localgrid)->grad,(*localgrid)->face,(*localgrid)->normal,(*localgrid)->nfaces,(*localgrid)->maxfaces,(*localgrid)->Nc);
 
   // create node array which will keep track of all nodal neighboors
   // first, get number of total points
-  // second, get a list of the points on each processor, this stores the 
+  // second, get a list of the points on each processor, this stores the
   // values for each proc in localgrid->localpoints
   if(myproc==0 && VERBOSE>2)  printf("\t\tGetProcPoints\n");
   GetProcPoints(*localgrid, maingrid);
 
   // allocate nodal neighbor array information (list of neighbors for each point)
-  // note that since the number of entries for each node is variable, 
+  // note that since the number of entries for each node is variable,
   // these are a list to Np lists
 
   // -- careful here as the list for numppneighs may need to be larger
@@ -2906,8 +2906,8 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
   (*localgrid)->peneighs = (int **)SunMalloc((*localgrid)->Np*sizeof(int*),"TransferData");
   (*localgrid)->numpcneighs = (int *)SunMalloc((*localgrid)->Np*sizeof(int),"TransferData");
   (*localgrid)->pcneighs = (int **)SunMalloc((*localgrid)->Np*sizeof(int*),"TransferData");
- 
-  // this function crashed because sampling of localgrid points is wrong 
+
+  // this function crashed because sampling of localgrid points is wrong
   // as nodes are not reordered
   if(myproc==0 && VERBOSE>2)  printf("\t\tCreateNodeArray\n");
   CreateNodeArray((*localgrid), (*localgrid)->Np,(*localgrid)->Ne, (*localgrid)->Nc, myproc);
@@ -2915,7 +2915,7 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
   // populate (*localgrid)->eneigh
   CreateMomentumCV(*localgrid);
 
-  // free temporary information connecting global grid to local grid 
+  // free temporary information connecting global grid to local grid
   // (will varry for each processor) and temporary flags
   free(flagged);
   free(lcptr);
@@ -2929,7 +2929,7 @@ static void TransferData(gridT *maingrid, gridT **localgrid, int myproc)
  * Determine if the neighbors to a particular cell should be
  * included on the local processor.  This effectively searches
  * over all the neighbors to the cell and determines if any
- * of these cells is on the local processor, if so, this is 
+ * of these cells is on the local processor, if so, this is
  * a processor boundary cell and should flagged.
  *
  */
@@ -2940,7 +2940,7 @@ static int IsNeighborLocal(int cell, gridT *maingrid, int myproc,
   if(listsize < 1) {
     printf("Error!!: List for boundary neighbors needs to be larger!-local\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   // select function to call first item in list
   switch(list[0]) {
@@ -2949,7 +2949,7 @@ static int IsNeighborLocal(int cell, gridT *maingrid, int myproc,
       return IsNeighborLocalByEdge(cell, maingrid, myproc, &list[1], listsize-1);
       break;
     case NODE:
-      // search by node 
+      // search by node
       return IsNeighborLocalByNode(cell, maingrid, myproc, &list[1], listsize-1);
       break;
     default:
@@ -2966,7 +2966,7 @@ static int IsNeighborLocal(int cell, gridT *maingrid, int myproc,
  * Determine if the neighbors to a particular cell should be
  * included on the local processor.  This effectively searches
  * over all the edge neighbors to the cell and determines if any
- * of these cells is on the local processor, if so, this is 
+ * of these cells is on the local processor, if so, this is
  * a processor boundary cell and should flagged.
  *
  */
@@ -2977,11 +2977,11 @@ static int IsNeighborLocalByEdge(int cell, gridT *maingrid, int myproc,
   if(listsize < 0) {
     printf("Error!!: List for boundary neighbors needs to be larger!-localedge\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   int nf, nei;
   // will need to generalize this for nodal neighbors
-       
+
   // over each face of the cell
   for(nf=0;nf<maingrid->nfaces[cell];nf++) {
     // get the neighbor
@@ -3031,7 +3031,7 @@ static int IsNeighborLocalByEdge(int cell, gridT *maingrid, int myproc,
  * Determine if the neighbors to a particular cell should be
  * included on the local processor.  This effectively searches
  * over all the nodal neighbors to the cell and determines if any
- * of these cells is on the local processor, if so, this is 
+ * of these cells is on the local processor, if so, this is
  * a processor boundary cell and should flagged.
  *
  */
@@ -3042,7 +3042,7 @@ static int IsNeighborLocalByNode(int cell, gridT *maingrid, int myproc,
   if(listsize < 0) {
     printf("Error!!: List for boundary neighbors needs to be larger!-localnode\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   int nf, in, nei, nn;
   // will need to generalize this for nodal neighbors
@@ -3098,17 +3098,17 @@ static int IsNeighborLocalByNode(int cell, gridT *maingrid, int myproc,
  * Usage: IsNeighborGlobal(cell, maingrid, localgrid, myproc)
  * -------------------------
  * Determine if the neighbors to a particular cell should be
- * included for interprocessor communication.  
+ * included for interprocessor communication.
  *
  */
-static int IsNeighborGlobal(int cell, gridT *maingrid, 
+static int IsNeighborGlobal(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize)
 {
   // if we don't have a good list, exit
   if(listsize < 1) {
     printf("Error!!: List for boundary neighbors needs to be larger!-global\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   // select function to call first item in list
   switch(list[0]) {
@@ -3118,7 +3118,7 @@ static int IsNeighborGlobal(int cell, gridT *maingrid,
           myproc, list, listsize-1);
       break;
     case NODE:
-      // search by node 
+      // search by node
       return IsNeighborGlobalByNode(cell, maingrid, localgrid,
           myproc, list, listsize-1);
       break;
@@ -3134,21 +3134,21 @@ static int IsNeighborGlobal(int cell, gridT *maingrid,
  * Usage: IsNeighborGlobalByEdge(cell, maingrid, localgrid, myproc)
  * -------------------------
  * Determine if the neighbors to a particular cell should be
- * included for interprocessor communication.  
+ * included for interprocessor communication.
  *
  */
-static int IsNeighborGlobalByEdge(int cell, gridT *maingrid, 
+static int IsNeighborGlobalByEdge(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize)
 {
   // if we don't have a good list, exit
   if(listsize < 0) {
     printf("Error!!: List for boundary neighbors needs to be larger!-globaledge\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   int nf, nei;
   // will need to generalize this for nodal neighbors
-       
+
   // over each face of the cell
   for(nf=0;nf<(*localgrid)->nfaces[cell];nf++) {
     // get the neighbor
@@ -3171,14 +3171,14 @@ static int IsNeighborGlobalByEdge(int cell, gridT *maingrid,
           case EDGE:
             // original selection by edge
             // check to see if we have a hit, if so we can quit and return 2
-            if(IsNeighborGlobalByEdge(nei, maingrid, localgrid, 
+            if(IsNeighborGlobalByEdge(nei, maingrid, localgrid,
                 myproc, &list[1], listsize-1)==1)
               return 1;
             break;
           case NODE:
             // new selection based on nodal neighbors (more inclusive)
             // check to see if we have a hit, if so we can quit and return 2
-            if(IsNeighborGlobalByNode(nei, maingrid, localgrid, 
+            if(IsNeighborGlobalByNode(nei, maingrid, localgrid,
                 myproc, &list[1], listsize-1)==1)
               return 1;
             break;
@@ -3198,23 +3198,23 @@ static int IsNeighborGlobalByEdge(int cell, gridT *maingrid,
  * Usage: IsNeighborGlobalByNode(cell, maingrid, localgrid, myproc)
  * -------------------------
  * Determine if the neighbors to a particular cell should be
- * included for interprocessor communication.  
+ * included for interprocessor communication.
  *
  */
-static int IsNeighborGlobalByNode(int cell, gridT *maingrid, 
+static int IsNeighborGlobalByNode(int cell, gridT *maingrid,
     gridT **localgrid, int myproc, boundaryselection *list, int listsize)
 {
   // if we don't have a good list, exit
   if(listsize < 0) {
     printf("Error!!: List for boundary neighbors needs to be larger!-globalnode\n");
     MPI_Finalize();
-    exit(EXIT_FAILURE);  
+    exit(EXIT_FAILURE);
   }
   int nf, nei, nn, in;
-       
+
   // over each node of the cell
   for(nf=0;nf<(*localgrid)->nfaces[cell];nf++) {
-    // get the node 
+    // get the node
     in = (*localgrid)->cells[cell*(*localgrid)->maxfaces+nf];
     // loop over all the nodal neighbors
     for(nn=0; nn < (*localgrid)->numpcneighs[in]; nn++) {
@@ -3237,14 +3237,14 @@ static int IsNeighborGlobalByNode(int cell, gridT *maingrid,
             case EDGE:
               // original selection by edge
               // check to see if we have a hit, if so we can quit and return 2
-              if(IsNeighborGlobalByEdge(nei, maingrid, localgrid, 
+              if(IsNeighborGlobalByEdge(nei, maingrid, localgrid,
                     myproc, &list[1], listsize-1)==1)
                 return 1;
               break;
             case NODE:
               // new selection based on nodal neighbors (more inclusive)
               // check to see if we have a hit, if so we can quit and return 2
-              if(IsNeighborGlobalByNode(nei, maingrid, localgrid, 
+              if(IsNeighborGlobalByNode(nei, maingrid, localgrid,
                     myproc, &list[1], listsize-1)==1)
                 return 1;
               break;
@@ -3264,13 +3264,13 @@ static int IsNeighborGlobalByNode(int cell, gridT *maingrid,
  * Function: Geometry
  * Usage: Geometry(maingrid, grid, myproc)
  * ---------------------------------------
- * Compute  geometry information such as cell area (AC), 
+ * Compute  geometry information such as cell area (AC),
  * edge length (df), gradient edge length (dg) between voronoi
- * cell centers [If this is a boundary edge then dg is twice the 
- * distance between the edge and the Voronoi point on the inside 
+ * cell centers [If this is a boundary edge then dg is twice the
+ * distance between the edge and the Voronoi point on the inside
  * of the boundary.], distange between voronoi cell center and edge
  * (def), cell normals (n1 and n2), location
- * of edge centers (xe, ye) [not neceessarily coincident upon 
+ * of edge centers (xe, ye) [not neceessarily coincident upon
  * edge mid-point], and coefficients that make up
  * tangents to compute advection (xi)
  *
@@ -3280,7 +3280,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   int n, nf, npc, ne, k, j, Nc=(*grid)->Nc, Ne=(*grid)->Ne, Np=(*grid)->Np, p1, p2,grad1,grad2,enei;
   REAL xt[(*grid)->maxfaces], yt[(*grid)->maxfaces], xc, yc, den, R0, tx, ty, tmag, xdott;
   REAL dx, dy, tmp_mag; // MR
-  
+
   (*grid)->Ac = (REAL *)SunMalloc(Nc*sizeof(REAL),"Geometry");
   (*grid)->df = (REAL *)SunMalloc(Ne*sizeof(REAL),"Geometry");
   (*grid)->dg = (REAL *)SunMalloc(Ne*sizeof(REAL),"Geometry");
@@ -3293,7 +3293,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
 
   // add on the total area of all the cells neighboring a point
   (*grid)->Actotal = (REAL **)SunMalloc(Np*sizeof(REAL*),"Geometry");
-  // allocate momory over all the cells 
+  // allocate momory over all the cells
   for(n = 0; n < Np; n++) {
     // allocate memory for each layer
     (*grid)->Actotal[n] = (REAL *)SunMalloc((*grid)->Nkp[n]*sizeof(REAL),"Geometry");
@@ -3311,9 +3311,9 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   }
 
   /* Compute the summed area of all the neighboring cells to a node */
-  // this is of limited utility in many computations since Actotal will be 
+  // this is of limited utility in many computations since Actotal will be
   // different with real world bathymetry
-  if(myproc==0 && VERBOSE>2) 
+  if(myproc==0 && VERBOSE>2)
     printf("\t\tComputing neighboring cell areas (Actotal)...\n");
   for(n=0 ; n < Np; n++) {
     for(k=0; k < (*grid)->Nkp[n]; k++) {
@@ -3329,7 +3329,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
       }
     }
   }
-  
+
   /* Compute the length of each edge */
   if(myproc==0 && VERBOSE>2) printf("\t\tComputing edge lengths...\n");
   for(n=0;n<Ne;n++) {
@@ -3341,13 +3341,13 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
 	       maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n+1]],2));
   }
 
-  
+
   ////#######################################################
   //// Rusty's code
   //// ######################################################
   //// elm version
   //// compute the centers of each edge using the midpoint of the edge
-  //// this is better conditioned, and really most of the time the cells are 
+  //// this is better conditioned, and really most of the time the cells are
   //// orthogonal
   //for(n=0;n<Ne;n++) {
   //  (*grid)->xe[n] = 0.5*(maingrid->xp[(*grid)->edges[NUMEDGECOLUMNS*n]]+
@@ -3356,22 +3356,22 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   //      	       maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n+1]]);
   //}
 
-  ///* Compute the normal distances between Voronoi points to compute the 
-  //   gradients and then output the lengths to a data file. Also, compute 
+  ///* Compute the normal distances between Voronoi points to compute the
+  //   gradients and then output the lengths to a data file. Also, compute
   //   n1 and n2 which make up the normal vector components. */
   //if(myproc==0 && VERBOSE>2) printf("Computing n1, n2, and dg..\n");
   //for(n=0;n<Ne;n++) {
   //  // calculate the normal based on the edge.  The voronoi centers are bit
   //  // "twitchier"
-  //  // 
+  //  //
 
   //  // Find the vector along the edge, then rotate 90 CCW
   //  // RCH: not sure if this will properly handle marker 6 edges - is
   //  // grid->grad consistent across processors??
-  //  
-  //  (*grid)->n1[n] = - (maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n+1]] - 
+  //
+  //  (*grid)->n1[n] = - (maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n+1]] -
   //                      maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n]]);
-  //  (*grid)->n2[n] = (maingrid->xp[(*grid)->edges[NUMEDGECOLUMNS*n+1]] - 
+  //  (*grid)->n2[n] = (maingrid->xp[(*grid)->edges[NUMEDGECOLUMNS*n+1]] -
   //      	       maingrid->xp[(*grid)->edges[NUMEDGECOLUMNS*n]]);
   //  tmp_mag = sqrt( pow( (*grid)->n1[n], 2 )  + pow( (*grid)->n2[n], 2) );
   //  (*grid)->n1[n] = (*grid)->n1[n] / tmp_mag;
@@ -3411,7 +3411,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   //for(n=0;n<Nc;n++) {
   //  for(nf=0;nf<(*grid)->nfaces[n];nf++) {
   //    ne = (*grid)->face[n*(*grid)->maxfaces+nf];
-  //    (*grid)->def[n*(*grid)->maxfaces+nf] = 
+  //    (*grid)->def[n*(*grid)->maxfaces+nf] =
   //      -(((*grid)->xv[n]-maingrid->xp[(*grid)->edges[ne*NUMEDGECOLUMNS]])*(*grid)->n1[ne]+
   //        ((*grid)->yv[n]-maingrid->yp[(*grid)->edges[ne*NUMEDGECOLUMNS]])*(*grid)->n2[ne])*
   //      (*grid)->normal[n*(*grid)->maxfaces+nf];
@@ -3451,7 +3451,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   //########################################################
   // Compute the centers of each edge, which are defined by the intersection
   // of the Voronoi Edge with the Delaunay Edge.  Note that this point is
-  // not the midpoint of the edge when one of the neighboring triangles is obtuse 
+  // not the midpoint of the edge when one of the neighboring triangles is obtuse
   // and it has been corrected.
   for(n=0;n<Ne;n++) {
     p1 = (*grid)->edges[NUMEDGECOLUMNS*n];
@@ -3475,7 +3475,7 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
     (*grid)->xe[n] = maingrid->xp[p1]+xdott*tx;
     (*grid)->ye[n] = maingrid->yp[p1]+xdott*ty;
     }
-    
+
     // This is the midpoint of the edge and is not used.
     /*
     (*grid)->xe[n] = 0.5*(maingrid->xp[(*grid)->edges[NUMEDGECOLUMNS*n]]+
@@ -3484,14 +3484,14 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
         		  maingrid->yp[(*grid)->edges[NUMEDGECOLUMNS*n+1]]);
     */
   }
-  
-  /* Compute the normal distances between Voronoi points to compute the 
-     gradients and then output the lengths to a data file. Also, compute 
+
+  /* Compute the normal distances between Voronoi points to compute the
+     gradients and then output the lengths to a data file. Also, compute
      n1 and n2 which make up the normal vector components. */
   if(myproc==0 && VERBOSE>2) printf("\t\tComputing n1, n2, and dg..\n");
   // for each edge
   for(n=0;n<Ne;n++) {
-    // if both cells are not ghost cells 
+    // if both cells are not ghost cells
     if((*grid)->grad[2*n]!=-1 && (*grid)->grad[2*n+1]!=-1) {
       (*grid)->n1[n] = (*grid)->xv[(*grid)->grad[2*n]]-(*grid)->xv[(*grid)->grad[2*n+1]];
       (*grid)->n2[n] = (*grid)->yv[(*grid)->grad[2*n]]-(*grid)->yv[(*grid)->grad[2*n+1]];
@@ -3518,8 +3518,8 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
         (*grid)->n1[n] = (*grid)->n1[n]/(*grid)->dg[n];
         (*grid)->n2[n] = (*grid)->n2[n]/(*grid)->dg[n];
         (*grid)->dg[n] = 2.0*(*grid)->dg[n];
-      } 
-      // other cell is ghost cell 
+      }
+      // other cell is ghost cell
       else {
         (*grid)->n1[n] = (*grid)->xv[(*grid)->grad[2*n]]-xc;
         (*grid)->n2[n] = (*grid)->yv[(*grid)->grad[2*n]]-yc;
@@ -3533,14 +3533,14 @@ static void Geometry(gridT *maingrid, gridT **grid, int myproc)
   }
 
   // Compute the length of the perpendicular bisector.  Note that this is not necessarily
-  // the distance to the edge midpoint unless both triangles have not been corrected.  
-  // Note that def points outward, so if def<0 then uc and vc will be 
-  // computed correctly for obtuse triangles and advection of momentum is conservative.  
-  // However, the method is unstable for obtuse triangles and correction must be used.  
+  // the distance to the edge midpoint unless both triangles have not been corrected.
+  // Note that def points outward, so if def<0 then uc and vc will be
+  // computed correctly for obtuse triangles and advection of momentum is conservative.
+  // However, the method is unstable for obtuse triangles and correction must be used.
   for(n=0;n<Nc;n++) {
     for(nf=0;nf<(*grid)->nfaces[n];nf++) {
       ne = (*grid)->face[n*(*grid)->maxfaces+nf];
-      (*grid)->def[n*(*grid)->maxfaces+nf] = 
+      (*grid)->def[n*(*grid)->maxfaces+nf] =
         -(((*grid)->xv[n]-maingrid->xp[(*grid)->edges[ne*NUMEDGECOLUMNS]])*(*grid)->n1[ne]+
             ((*grid)->yv[n]-maingrid->yp[(*grid)->edges[ne*NUMEDGECOLUMNS]])*(*grid)->n2[ne])*
         (*grid)->normal[n*(*grid)->maxfaces+nf];
@@ -3632,10 +3632,10 @@ REAL GetCircumcircleRadius(REAL *xt, REAL *yt, int Nf)
     else
       R0*=sqrt(pow(xt[nf+1]-xt[nf],2)+pow(yt[nf+1]-yt[nf],2));
   R0/=(4*GetArea(xt,yt,Nf));
-  
+
   return R0;
 }
-  
+
 /*
  * Function: GetArea
  * Usage: GetArea(xt, yt, Nf)
@@ -3659,10 +3659,10 @@ REAL GetArea(REAL *xt, REAL *yt, int Nf)
     h = sqrt(r2*r2-l*l);
     return 0.5*b*h;
   }
-  else 
+  else
     if(Nf>3) {
       area=GetArea(xt,yt,3);
-      for(i=0;i<(Nf-3);i++){        
+      for(i=0;i<(Nf-3);i++){
         xt2[0]=xt[(i+2)];
         xt2[1]=xt[(i+3)];
         xt2[2]=xt[0];
@@ -3712,8 +3712,8 @@ static void InterpDepth(gridT *grid, int myproc, int numprocs, MPI_Comm comm)
     for(n=nstart;n<nstart+ncount;n++)
       grid->dv[n]*=scaledepthfactor;
 
-  if(myproc!=0) 
-    MPI_Send((void *)(&(grid->dv[nstart])),ncount,MPI_DOUBLE,0,1,comm); 
+  if(myproc!=0)
+    MPI_Send((void *)(&(grid->dv[nstart])),ncount,MPI_DOUBLE,0,1,comm);
   else {
     for(proc=1;proc<numprocs;proc++) {
       nstart = proc*floor(grid->Nc/numprocs);
@@ -3741,7 +3741,7 @@ static int CorrectVoronoi(gridT *grid, int myproc)
   for(n=0;n<grid->Ne;n++) {
     nc1 = grid->grad[2*n];
     nc2 = grid->grad[2*n+1];
-    
+
     if(nc1 != -1 && nc2 != -1 && grid->nfaces[nc1]==3 && grid->nfaces[nc2]==3) {
       xv1 = grid->xv[nc1];
       xv2 = grid->xv[nc2];
@@ -3816,7 +3816,7 @@ static int CorrectVoronoi(gridT *grid, int myproc)
   if(numcorr>0 && VERBOSE>1 && myproc==0)
     printf("Corrected %d of %d edges with dg < %.2f dg0 (%.2f%%).\n",
 	   numcorr,grid->Ne,VoronoiRatio,(REAL)numcorr/(REAL)grid->Ne*100.0);
-  
+
   return numcorr;
 }
 
@@ -3896,7 +3896,7 @@ static void VoronoiStats(gridT *grid) {
   dgmean/=(REAL)numdg;
 
   dgstd=0;
-  for(n=0;n<numdg;n++) 
+  for(n=0;n<numdg;n++)
     dgstd+=pow(dg[n]-dgmean,2);
   dgstd=sqrt(dgstd/(REAL)numdg);
 
@@ -3915,7 +3915,7 @@ static void VoronoiStats(gridT *grid) {
       histmax = histmin+deldg;
       for(n=0;n<numdg;n++) {
 	if((dg[n]>=histmin &&
-	    dg[n]<histmax) || 
+	    dg[n]<histmax) ||
 	   (i==NUMDGHIST-2 && dg[n]==histmax))
 	  dghist++;
       }
@@ -3939,8 +3939,8 @@ static void FixDZZ(gridT *grid, REAL maxdepth, int Nkmax, int fixdzz, int myproc
   REAL z, dzz, dzsmall, *dz = (REAL *)SunMalloc(Nkmax*sizeof(REAL),"FixDZZ");
 
   dzsmall=(REAL)MPI_GetValue(DATAFILE,"dzsmall","FixDZZ",myproc);
-  
-  GetDZ(dz,maxdepth,maxdepth,Nkmax,myproc);  
+
+  GetDZ(dz,maxdepth,maxdepth,Nkmax,myproc);
   for(i=0;i<grid->Nc;i++) {
     z=0;
     for(k=0;k<Nkmax;k++) {
@@ -3961,7 +3961,7 @@ static void FixDZZ(gridT *grid, REAL maxdepth, int Nkmax, int fixdzz, int myproc
             kount++;
             grid->dv[i]=-z+dzsmall;
           }
-        }	  
+        }
         break;
       }
       z-=dz[k];

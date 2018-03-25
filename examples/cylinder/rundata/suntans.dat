@@ -32,11 +32,11 @@ CdT	                0.0 	# Drag coefficient at surface
 CdB	                0.0	# Drag coefficient at bottom
 CdW			0.0	# Drag coefficient at sidewalls
 turbmodel		0	# Turbulence model (0 for none, 1 for MY25)
-AB          3 
-dt 			2.5e-3	# Time step
+AB          3
+dt 			2.5e-6	# Time step
 grav			9.81e10 # Rigid lid approximation
-Cmax 			1 	# Maximum permissible Courant number
-nsteps 			1600    # Number of steps
+Cmax 			10 	# Maximum permissible Courant number
+nsteps 			160    # Number of steps
 ntout   		80  	# How often to output data
 ntprog   		5 	# How often to report progress (in %)
 ntconserve 		1	# How often to output conserved data
@@ -48,7 +48,7 @@ qprecond		2	# 1 = preconditioned, 0 = not preconditioned
 epsilon			1e-10 	# Tolerance for CG convergence
 qepsilon		1e-5	# Tolerance for CG convergence for nonhydrostatic pressure
 resnorm			0	# Normalized or non-normalized residual
-relax			1	# Relaxation parameter for GS solver.	
+relax			1	# Relaxation parameter for GS solver.
 amp 			0.8	# amplitude
 omega 			0	# frequency
 flux 			0	# flux
@@ -57,7 +57,7 @@ volcheck		0	# Check for volume conservation
 masscheck		0	# Check for mass conservation
 interp			1	# Quadratic interpolation
 nonlinear		2	# No momentum advection: 0, first-order upwind: 1, Central-differencing: 2
-interp      1 
+interp      1
 laxWendroff		0       # Dont' use Lax Wendroff diffusion coefficients
 newcells		0	# 1 if adjust momentum in surface cells as the volume changes, 0 otherwise
 wetdry			0       # 1 if wetting and drying, 0 otherwise
